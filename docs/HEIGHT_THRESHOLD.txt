@@ -1,0 +1,2 @@
+minimal_T_approx ≈ 1.5867647318922528e28
+clean public height: T >= 1e29
