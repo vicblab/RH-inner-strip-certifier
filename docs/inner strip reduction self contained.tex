@@ -1,0 +1,3558 @@
+\documentclass[11pt]{article}
+
+% ============================================================
+% Encoding and page layout
+% ============================================================
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,margin=1.12in]{geometry}
+
+% ============================================================
+% Mathematics and theorem environments
+% ============================================================
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage[nameinlink,capitalize]{cleveref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!55!black,
+    citecolor=blue!55!black,
+    urlcolor=blue!55!black
+}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{assumption}[theorem]{Assumption}
+
+% ============================================================
+% Macros
+% ============================================================
+
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\dd}{\,\mathrm{d}}
+
+\newcommand{\zetaR}{\zeta}
+\newcommand{\half}{\frac12}
+
+\newcommand{\NQ}{\mathcal N_Q}
+\newcommand{\RQ}{\mathcal R_Q}
+\newcommand{\Rtot}{\mathcal R_{\rm total}}
+\newcommand{\Beff}{\mathfrak B_{\rm eff}}
+
+\newcommand{\Ech}{\mathcal E}
+\newcommand{\Och}{\mathcal O}
+\newcommand{\Dvec}{\mathfrak D}
+\newcommand{\Bvec}{\mathfrak B}
+\newcommand{\Rvec}{\mathfrak R}
+
+\newcommand{\gev}{g_0}
+\newcommand{\Cinner}{C_{\rm inner}}
+\newcommand{\Czero}{C_0}
+\newcommand{\Cone}{C_1}
+
+\newcommand{\RepoURL}{\url{https://github.com/vicblab/RH-outer.strip-certifier}}
+
+% ============================================================
+% Title
+% ============================================================
+
+\title{
+\textbf{A Reflected Two-Channel Quotient Obstruction}\\[0.35em]
+\large A finite derivative-certificate reduction for inner-strip zeta zeros
+}
+
+\author{V\'ictor Blanco Bataller}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% ============================================================
+% Abstract
+% ============================================================
+
+\begin{abstract}
+This paper develops the inner-strip continuation of the Mellin-symmetric
+quotient-obstruction method.  The outer-strip argument proves a high-height
+zero-free region by comparing a quotient numerator
+\[
+        \NQ(s)
+\]
+with an effective bracket
+\[
+        \frac{\ii}{\tau}\Beff(\sigma,\tau).
+\]
+Away from the critical line, the bracket has a fixed positive lower bound.
+Near the critical line, however, this one-channel lower bound degenerates.
+Thus the outer-strip proof cannot be pushed to \(\Re s=1/2\) by merely
+tightening constants.
+
+The inner-strip mechanism is different.  If
+\[
+        s_-=\frac12-u+\ii\tau
+\]
+is an off-critical zero, then the functional equation and conjugation symmetry
+force the reflected point
+\[
+        s_+=\frac12+u+\ii\tau
+\]
+to be a zero as well.  Hence an off-critical reflected zero pair forces two
+quotient equations:
+\[
+        \NQ(s_-)=0,
+        \qquad
+        \NQ(s_+)=0.
+\]
+Equivalently, it forces both the reflected average and the reflected finite
+difference to vanish.  This leads to the two-channel detector
+\[
+        \Dvec(u,\tau)
+        =
+        \left(
+        \frac{\NQ(s_-)+\NQ(s_+)}2,
+        \frac{\NQ(s_-)-\NQ(s_+)}{2u}
+        \right).
+\]
+
+The main structural observation is that the corresponding bracket vector does
+not degenerate at the critical line.  Its limiting components are
+\[
+        \Beff\left(\frac12,\tau\right)
+        \quad\text{and}\quad
+        -\partial_\sigma\Beff\left(\frac12,\tau\right),
+\]
+and these two quantities cannot vanish simultaneously.  In fact, the critical
+line bracket vector has the explicit lower scale
+\[
+        \frac{\sqrt2}{48}(23\log2-2)>0.
+\]
+For a finite inner strip
+\[
+        0<\left|\Re s-\frac12\right|\le0.01,
+\]
+this lower bound is replaced by a finite interval certificate, for which the
+conservative public target is
+\[
+        \gev=0.2.
+\]
+
+The residual side requires one new ingredient beyond the outer-strip
+certificate: each residual sector must be certified not only in value but also
+in its \(\sigma\)-derivative.  The ordinary residual controls the reflected
+average, while the derivative residual controls the divided reflected
+difference by the mean value theorem.  Thus the inner-strip problem is reduced
+to a finite certificate for the seven residual sectors and their
+\(\sigma\)-derivatives.
+
+This paper is a structural reduction.  It does not by itself claim a completed
+inner-strip zero-free theorem.  The certified theorem is obtained only after
+the public file
+\[
+        \texttt{INNER\_STRIP\_CERTIFICATE\_SAFE.json}
+\]
+has status
+\[
+        \texttt{inner\_full\_certificate}.
+\]
+\end{abstract}
+
+\tableofcontents
+
+% ============================================================
+% 1. Introduction
+% ============================================================
+
+\section{Introduction}
+\label{sec:introduction}
+
+The goal of this paper is to isolate the correct inner-strip obstruction for
+possible off-critical zeros of the Riemann zeta function.  It is a continuation
+of the outer-strip quotient-obstruction framework developed in the structural
+outer-strip paper and certified in the companion finite certificate.  The
+outer-strip mechanism is based on an asymptotic identity of the form
+\[
+        \NQ(s)
+        =
+        \frac{\ii}{\tau}\Beff(\sigma,\tau)
+        +
+        \Rtot(s),
+        \qquad
+        s=\sigma+\ii\tau,
+\]
+where \(\NQ(s)\) is a quotient-normalized numerator, \(\Beff(\sigma,\tau)\) is
+an effective bracket, and \(\Rtot(s)\) is the grouped residual.
+
+In a fixed outer strip, for example
+\[
+        0.01\le\sigma\le0.49,
+\]
+the bracket satisfies a positive lower bound
+\[
+        |\Beff(\sigma,\tau)|\ge d>0.
+\]
+The residual is certified to satisfy
+\[
+        |\Rtot(s)|
+        \le
+        C
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+Thus the main term has size at least \(d/\tau\), while the residual has size
+\(O(\log\tau/\tau^{3/2})\).  For sufficiently large \(\tau\), the main term
+dominates.  Since every zero satisfies
+\[
+        \NQ(s)=0,
+\]
+this gives a contradiction and therefore excludes zeros in the fixed outer
+strip.
+
+This argument is deliberately an outer-strip argument.  It cannot be extended
+to the critical line by merely improving the constant \(C\).  The reason is
+structural: the one-point bracket lower bound degenerates as
+\[
+        \sigma\to\frac12.
+\]
+If
+\[
+        u=\frac12-\sigma,
+\]
+then the one-channel bracket gap is of first order in \(u\).  Consequently the
+outer-strip comparison can at best see a main term of size comparable to
+\[
+        \frac{u}{\tau}.
+\]
+A residual estimate of size
+\[
+        \frac{\log\tau}{\tau^{3/2}}
+\]
+does not by itself exclude arbitrarily small positive \(u\).  Therefore the
+inner strip requires a different detector.
+
+The correct detector comes from the symmetry of the zeros.  Suppose
+\[
+        s_-=\frac12-u+\ii\tau,
+        \qquad
+        0<u\le u_0,
+\]
+is a nontrivial zero.  By the functional equation and conjugation symmetry,
+the reflected point
+\[
+        s_+=\frac12+u+\ii\tau
+\]
+is also a nontrivial zero.  Hence the zero condition gives two exact equations:
+\[
+        \NQ(s_-)=0,
+        \qquad
+        \NQ(s_+)=0.
+\]
+It is therefore wasteful to test only one value of \(\NQ\).  The reflected pair
+forces both the average
+\[
+        \frac{\NQ(s_-)+\NQ(s_+)}2
+\]
+and the divided difference
+\[
+        \frac{\NQ(s_-)-\NQ(s_+)}{2u}
+\]
+to vanish.
+
+This is the key inner-strip idea.  The outer-strip bracket weakens at the
+critical line, but an off-critical reflected pair is more rigid than a single
+point: it must make both the reflected midpoint value and the reflected slope
+vanish.  The two-channel detector records precisely these two quantities.
+
+We therefore define
+\[
+        \Dvec(u,\tau)
+        :=
+        \left(
+        \Ech(u,\tau),
+        \Och(u,\tau)
+        \right),
+\]
+where
+\[
+        \Ech(u,\tau)
+        :=
+        \frac{\NQ(s_-)+\NQ(s_+)}2,
+\]
+and
+\[
+        \Och(u,\tau)
+        :=
+        \frac{\NQ(s_-)-\NQ(s_+)}{2u}.
+\]
+At an off-critical reflected zero pair,
+\[
+        \Dvec(u,\tau)=(0,0).
+\]
+
+Substituting the structural quotient expansion into the two channels gives
+\[
+        \Dvec(u,\tau)
+        =
+        \frac{\ii}{\tau}\Bvec(u,\tau)
+        +
+        \Rvec(u,\tau),
+\]
+where \(\Bvec\) is the reflected bracket vector and \(\Rvec\) is the reflected
+residual vector.  The bracket vector is
+\[
+        \Bvec(u,\tau)
+        =
+        \left(
+        B_{\rm ev}(u,\tau),
+        B_{\rm od}(u,\tau)
+        \right),
+\]
+with
+\[
+        B_{\rm ev}(u,\tau)
+        =
+        \frac{
+        \Beff(\frac12-u,\tau)
+        +
+        \Beff(\frac12+u,\tau)
+        }2,
+\]
+and
+\[
+        B_{\rm od}(u,\tau)
+        =
+        \frac{
+        \Beff(\frac12-u,\tau)
+        -
+        \Beff(\frac12+u,\tau)
+        }{2u}.
+\]
+As \(u\to0\), these components tend to
+\[
+        \Beff\left(\frac12,\tau\right)
+        \quad\text{and}\quad
+        -\partial_\sigma\Beff\left(\frac12,\tau\right).
+\]
+The crucial point is that these limiting components cannot vanish
+simultaneously.  The reflected even channel sees the value of the bracket on
+the critical line; the reflected odd channel sees its transverse derivative.
+
+This is the inner-strip replacement for the outer-strip bracket gap.  Instead
+of proving
+\[
+        |\Beff(\sigma,\tau)|\ge d
+\]
+at one point, we prove a vector lower bound
+\[
+        \|\Bvec(u,\tau)\|\ge \gev.
+\]
+For the final certified inner strip
+\[
+        0<u\le0.01,
+\]
+the conservative target is
+\[
+        \gev=0.2.
+\]
+
+The residual side also changes.  The even residual is controlled by the
+ordinary residual bound.  The divided odd residual is controlled by a
+\(\sigma\)-derivative bound.  Thus each residual sector must be certified in
+two norms:
+\[
+        |\mathcal R_\nu(s)|
+        \le
+        C_{\nu,0}
+        \frac{\log\tau}{\tau^{3/2}},
+\]
+and
+\[
+        |\partial_\sigma\mathcal R_\nu(s)|
+        \le
+        C_{\nu,1}
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+The seven sectors are the same sectors as in the outer-strip decomposition:
+\[
+        {\rm band},
+        \quad
+        {\rm bd},
+        \quad
+        {\rm far},
+        \quad
+        {\rm end},
+        \quad
+        {\rm nonstat},
+        \quad
+        {\rm floor},
+        \quad
+        {\rm core}.
+\]
+The derivative certificate is what makes the divided reflected difference
+finite and uniform as \(u\to0\).
+
+The resulting exclusion mechanism is simple.  If
+\[
+        \|\Bvec(u,\tau)\|\ge \gev
+\]
+and
+\[
+        \|\Rvec(u,\tau)\|
+        \le
+        \Cinner
+        \frac{\log\tau}{\tau^{3/2}},
+\]
+then
+\[
+        \|\Dvec(u,\tau)\|
+        \ge
+        \frac{\gev}{\tau}
+        -
+        \Cinner
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+This is positive whenever
+\[
+        \sqrt{\tau}
+        >
+        \frac{\Cinner}{\gev}
+        \log\tau.
+\]
+But a reflected off-critical zero pair would force
+\[
+        \Dvec(u,\tau)=(0,0).
+\]
+Hence no such pair can exist above the certified height.
+
+The paper is organized as follows.  In
+\cref{sec:structural-input}, we state the structural quotient expansion
+imported from the outer-strip paper.  In
+\cref{sec:reflected-zero-pairs}, we record the exact reflected zero-pair
+identity.  In \cref{sec:two-channel-detector}, we define the two-channel
+detector and derive its bracket-residual decomposition.  In
+\cref{sec:bracket-vector}, we prove the algebraic nondegeneracy of the
+critical-line bracket vector and state the finite inner-strip bracket
+certificate.  In \cref{sec:residual-vector}, we show how ordinary and
+\(\sigma\)-derivative residual certificates imply the two-channel residual
+bound.  In \cref{sec:sector-certifiability}, we explain sector by sector why
+the derivative constants are finitely certifiable.  Finally, in
+\cref{sec:inner-exclusion}, we state the certified inner-strip exclusion
+theorem conditional on the final public certificate
+\[
+        \texttt{INNER\_STRIP\_CERTIFICATE\_SAFE.json}.
+\]
+
+\begin{remark}[Scope]
+This paper is an inner-strip structural reduction.  It does not claim a
+completed inner-strip zero-free theorem until the derivative-aware certificate
+has been produced and the final JSON file has status
+\[
+        \texttt{inner\_full\_certificate}.
+\]
+The purpose of the paper is to prove that the inner-strip problem reduces to a
+finite list of ordinary and \(\sigma\)-derivative residual certificates.
+\end{remark}
+
+% ============================================================
+% 2. Structural input from the outer-strip quotient framework
+% ============================================================
+
+\section{Structural input from the outer-strip quotient framework}
+\label{sec:structural-input}
+
+This section records the analytic input imported from the outer-strip
+quotient-obstruction framework.  The inner-strip argument does not rederive the
+Mellin identities, the four-family decomposition, the Poisson band expansion,
+or the compact-boundary construction.  Those belong to the structural
+outer-strip paper.  What changes here is the way in which the already-derived
+quotient expansion is tested near the critical line.
+
+Throughout this paper we write
+\[
+        s=\sigma+\ii\tau,
+        \qquad
+        \tau>0,
+\]
+and we use the quotient numerator
+\[
+        \NQ(s)
+\]
+from the outer-strip paper.  At every nontrivial zero of \(\zeta(s)\),
+\[
+        \NQ(s)=0.
+\]
+The precise normalization used here is the same as in the outer-strip paper:
+\[
+        \NQ(s)
+        =
+        B(s)+\frac{s-1}{s}A(s),
+\]
+where
+\[
+        A(s):=\int_1^\infty \{x\}x^{-s-1}\dd x,
+\]
+and
+\[
+        B(s):=\int_1^\infty \{x\}x^{s-2}\dd x.
+\]
+Equivalently, one may use the multiplied numerator
+\[
+        sB(s)+(s-1)A(s),
+\]
+since \(s\ne0\) in the critical strip.  In this paper we use the quotient
+normalization \(\NQ\), because it is the normalization in which the effective
+bracket appears with prefactor \(\ii/\tau\).
+
+\subsection{Imported quotient expansion}
+
+The structural outer-strip paper proves an expansion of the form
+\[
+        \NQ(s)
+        =
+        \frac{\ii}{\tau}\Beff(\sigma,\tau)
+        +
+        \Rtot(s),
+\]
+where \(\Beff(\sigma,\tau)\) is the effective quotient bracket and
+\(\Rtot(s)\) is the total grouped residual.
+
+For the inner-strip argument we require this expansion on the symmetric
+neighborhood
+\[
+        \left|\sigma-\frac12\right|\le0.01,
+        \qquad
+        \tau\ge T_0,
+\]
+where in the certified implementation one may take
+\[
+        T_0=10.
+\]
+The logarithm in all residual norms is the natural logarithm.
+
+\begin{assumption}[Imported quotient expansion on the inner strip]
+\label{ass:inner-quotient-expansion}
+On the region
+\[
+        \left|\sigma-\frac12\right|\le0.01,
+        \qquad
+        \tau\ge T_0,
+\]
+the quotient numerator admits the decomposition
+\[
+        \NQ(s)
+        =
+        \frac{\ii}{\tau}\Beff(\sigma,\tau)
+        +
+        \Rtot(s).
+\]
+The total residual decomposes into the seven sectors
+\[
+        \Rtot(s)
+        =
+        \mathcal R_{\rm band}(s)
+        +
+        \mathcal R_{\rm bd}(s)
+        +
+        \mathcal R_{\rm far}(s)
+        +
+        \mathcal R_{\rm end}(s)
+        +
+        \mathcal R_{\rm nonstat}(s)
+        +
+        \mathcal R_{\rm floor}(s)
+        +
+        \mathcal R_{\rm core}(s).
+\]
+The sector names and normalizations are the same as in the outer-strip
+structural paper and its certification companion.
+\end{assumption}
+
+\begin{remark}[Why this is an assumption here]
+The present paper is the inner-strip structural reduction.  It is not intended
+to repeat the analytic derivation of the quotient expansion.  The role of
+\cref{ass:inner-quotient-expansion} is to state the exact interface required
+from the outer-strip structural paper.  The new work here begins after this
+interface: we replace the one-channel outer-strip test by a reflected
+two-channel test and identify the additional derivative residual certificates
+needed near the critical line.
+\end{remark}
+
+\subsection{Effective bracket}
+
+The effective bracket has the form
+\[
+\begin{aligned}
+        \Beff(\sigma,\tau)
+        &=
+        2^\sigma e^{\ii L}
+        \left(
+        \frac{12-\sigma}{48}
+        +
+        \frac{\ii X}{4}
+        \right)
+\\
+        &\quad
+        -
+        2^{-\sigma}e^{-\ii L}
+        \left(
+        \frac{11+\sigma}{24}
+        -
+        \frac{\ii X}{2}
+        \right),
+\end{aligned}
+\]
+where
+\[
+        L:=\tau\log2,
+\]
+and
+\[
+        X:=\Xi_{\rm end}(\tau)
+\]
+is the real regularized endpoint scalar imported from the structural
+four-family endpoint analysis.
+
+The only properties of \(X\) used in the bracket-vector argument are that
+\[
+        X\in\mathbb R
+\]
+and that the same value of \(X\) appears in the reflected evaluations
+\[
+        \Beff\left(\frac12-u,\tau\right),
+        \qquad
+        \Beff\left(\frac12+u,\tau\right).
+\]
+The critical bracket-vector lower bound proved later is uniform in real \(X\);
+therefore no numerical upper bound for \(X\) is needed in the algebraic
+critical-line nondegeneracy argument.
+
+\begin{remark}[Why no bound for \(X\) is needed at the critical line]
+The outer-strip proof uses a one-channel modulus lower bound for
+\(\Beff(\sigma,\tau)\).  That lower bound depends on comparing two amplitudes
+and degenerates as \(\sigma\to1/2\).  The inner-strip proof instead uses the
+two quantities
+\[
+        \Beff\left(\frac12,\tau\right)
+        \quad\text{and}\quad
+        \partial_\sigma\Beff\left(\frac12,\tau\right).
+\]
+Their combined squared norm has a positive lower bound uniformly for every
+real value of \(X\).  This is the algebraic reason the reflected two-channel
+detector is the correct inner-strip object.
+\end{remark}
+
+\subsection{Residual norms required for the inner strip}
+
+The outer-strip certificate controls the residual itself in the norm
+\[
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+For the inner strip, this is not enough.  The reflected average channel uses
+the ordinary residual, but the divided odd channel contains
+\[
+        \frac{\Rtot(s_-)-\Rtot(s_+)}{2u}.
+\]
+To control this uniformly as \(u\to0\), one needs a uniform
+\(\sigma\)-derivative bound for the residual.
+
+Therefore each residual sector must be certified in two norms.
+
+\begin{definition}[Inner-strip value and derivative sector constants]
+\label{def:inner-sector-constants}
+Let
+\[
+        \nu\in
+        \{
+        {\rm band},
+        {\rm bd},
+        {\rm far},
+        {\rm end},
+        {\rm nonstat},
+        {\rm floor},
+        {\rm core}
+        \}.
+\]
+A pair of constants
+\[
+        C_{\nu,0},
+        \qquad
+        C_{\nu,1}
+\]
+certifies the sector \(\mathcal R_\nu\) on the inner strip if, for every
+\[
+        \left|\sigma-\frac12\right|\le0.01,
+        \qquad
+        \tau\ge T_0,
+\]
+one has
+\[
+        |\mathcal R_\nu(\sigma+\ii\tau)|
+        \le
+        C_{\nu,0}
+        \frac{\log\tau}{\tau^{3/2}},
+\]
+and
+\[
+        |\partial_\sigma\mathcal R_\nu(\sigma+\ii\tau)|
+        \le
+        C_{\nu,1}
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+\end{definition}
+
+Define the total value and derivative constants by
+\[
+        \Czero
+        :=
+        \sum_\nu C_{\nu,0},
+\]
+and
+\[
+        \Cone
+        :=
+        \sum_\nu C_{\nu,1}.
+\]
+Finally define the inner vector residual constant
+\[
+        \Cinner
+        :=
+        \sqrt{\Czero^2+\Cone^2}.
+\]
+
+\begin{remark}[Why the derivative norm is the right one]
+The divided odd channel contains a difference quotient in the real direction.
+For
+\[
+        s_\pm=\frac12\pm u+\ii\tau,
+\]
+the mean value theorem gives
+\[
+        \left|
+        \frac{\Rtot(s_-)-\Rtot(s_+)}{2u}
+        \right|
+        \le
+        \sup_{\left|\sigma-\frac12\right|\le u}
+        |\partial_\sigma\Rtot(\sigma+\ii\tau)|.
+\]
+Thus a uniform \(\partial_\sigma\)-residual certificate is exactly what is
+needed to make the divided odd channel finite and stable as \(u\to0\).
+\end{remark}
+
+\subsection{Certification interface}
+
+The final inner-strip theorem will not cite individual hand-transcribed
+constants.  Instead, it will cite a public JSON certificate.  The required
+certificate contract is as follows.
+
+For each sector \(\nu\), the corresponding JSON file must have status
+\[
+        \texttt{proved}
+\]
+and must contain the two fields
+\[
+        \texttt{C\_value\_upper\_safe},
+        \qquad
+        \texttt{C\_sigma\_derivative\_upper\_safe}.
+\]
+The final merge file
+\[
+        \texttt{INNER\_STRIP\_CERTIFICATE\_SAFE.json}
+\]
+must have status
+\[
+        \texttt{inner\_full\_certificate}.
+\]
+It must record
+\[
+        \gev,
+        \qquad
+        \Czero,
+        \qquad
+        \Cone,
+        \qquad
+        \Cinner,
+\]
+and the verified height inequality
+\[
+        \sqrt T
+        >
+        \frac{\Cinner}{\gev}\log T.
+\]
+
+For the public target used in this paper, the bracket-vector certificate will
+use
+\[
+        \gev=0.2.
+\]
+If the final merged certificate verifies
+\[
+        T=10^{30},
+\]
+then the inner-strip exclusion height matches the outer-strip certified height.
+
+\begin{remark}[No hidden constants]
+All constants used in the final inner-strip theorem must appear either in the
+structural formulas of this paper or in the final public certificate file.
+There is no untracked residual sector and no untracked derivative sector.
+\end{remark}
+
+% ============================================================
+% 3. Reflected zero pairs and the two-channel detector
+% ============================================================
+
+\section{Reflected zero pairs}
+\label{sec:reflected-zero-pairs}
+
+The inner-strip argument begins with an exact symmetry observation.  In the
+outer strip, a single point \(s=\sigma+\ii\tau\) is tested against the
+one-point bracket \(\Beff(\sigma,\tau)\).  Near the critical line this is not
+the correct perspective.  A zero away from the critical line never occurs in
+isolation: by the functional equation and conjugation symmetry it belongs to a
+reflected pair.
+
+We write
+\[
+        s_-(u,\tau)
+        :=
+        \frac12-u+\ii\tau,
+        \qquad
+        s_+(u,\tau)
+        :=
+        \frac12+u+\ii\tau,
+\]
+where
+\[
+        0<u\le u_0.
+\]
+In the certified inner strip we shall take
+\[
+        u_0=0.01.
+\]
+
+\begin{lemma}[Reflected zero-pair symmetry]
+\label{lem:reflected-zero-pair}
+Let
+\[
+        0<u<\frac12,
+        \qquad
+        \tau>0.
+\]
+If
+\[
+        s_-=\frac12-u+\ii\tau
+\]
+is a nontrivial zero of \(\zeta(s)\), then
+\[
+        s_+=\frac12+u+\ii\tau
+\]
+is also a nontrivial zero of \(\zeta(s)\).
+\end{lemma}
+
+\begin{proof}
+The nontrivial zeros of \(\zeta(s)\) are invariant under conjugation
+\[
+        s\mapsto \overline{s}
+\]
+and under the functional-equation reflection
+\[
+        s\mapsto 1-s.
+\]
+Equivalently, they are invariant under the combined reflection
+\[
+        s\mapsto 1-\overline{s}.
+\]
+Applying this map to
+\[
+        s_-=\frac12-u+\ii\tau
+\]
+gives
+\[
+        1-\overline{s_-}
+        =
+        1-\left(\frac12-u-\ii\tau\right)
+        =
+        \frac12+u+\ii\tau
+        =
+        s_+.
+\]
+Therefore \(s_+\) is also a nontrivial zero.
+\end{proof}
+
+The quotient numerator was normalized in the structural paper so that every
+nontrivial zero satisfies
+\[
+        \NQ(s)=0.
+\]
+The preceding symmetry therefore gives two exact equations from one
+off-critical zero.
+
+\begin{corollary}[Two quotient equations at a reflected pair]
+\label{cor:two-quotient-equations}
+If
+\[
+        s_-=\frac12-u+\ii\tau
+\]
+is a nontrivial zero with \(0<u<1/2\), then
+\[
+        \NQ(s_-)=0,
+        \qquad
+        \NQ(s_+)=0,
+\]
+where
+\[
+        s_+=\frac12+u+\ii\tau.
+\]
+\end{corollary}
+
+\begin{proof}
+By \cref{lem:reflected-zero-pair}, \(s_+\) is also a nontrivial zero.  The
+quotient numerator satisfies \(\NQ(s)=0\) at every nontrivial zero.  Applying
+this to both \(s_-\) and \(s_+\) proves the claim.
+\end{proof}
+
+\begin{remark}[Why this matters]
+The outer-strip proof uses the single equation
+\[
+        \NQ(s)=0
+\]
+at one point.  In the inner strip, an off-critical zero gives the stronger
+pair of equations
+\[
+        \NQ(s_-)=0,
+        \qquad
+        \NQ(s_+)=0.
+\]
+The two-channel detector below is simply the average and the finite-difference
+form of these two equations.
+\end{remark}
+
+% ============================================================
+% 4. The two-channel detector
+% ============================================================
+
+\section{The two-channel detector}
+\label{sec:two-channel-detector}
+
+We now define the reflected detector used throughout the inner-strip argument.
+It is useful to think of the two components as follows:
+
+\begin{itemize}[leftmargin=2.2em]
+    \item the even channel measures the reflected midpoint value of the
+    quotient numerator;
+
+    \item the divided odd channel measures the reflected transverse slope of
+    the quotient numerator.
+\end{itemize}
+
+At an off-critical reflected zero pair, both quantities must vanish.
+
+\begin{definition}[Even and divided odd quotient channels]
+\label{def:two-channel-detector}
+Let
+\[
+        s_-=\frac12-u+\ii\tau,
+        \qquad
+        s_+=\frac12+u+\ii\tau,
+\]
+with
+\[
+        0<u\le u_0.
+\]
+Define the even quotient channel by
+\[
+        \Ech(u,\tau)
+        :=
+        \frac{\NQ(s_-)+\NQ(s_+)}{2},
+\]
+and the divided odd quotient channel by
+\[
+        \Och(u,\tau)
+        :=
+        \frac{\NQ(s_-)-\NQ(s_+)}{2u}.
+\]
+The reflected two-channel detector is
+\[
+        \Dvec(u,\tau)
+        :=
+        \left(
+        \Ech(u,\tau),
+        \Och(u,\tau)
+        \right).
+\]
+\end{definition}
+
+\begin{lemma}[Detector vanishing at an off-critical reflected zero pair]
+\label{lem:detector-vanishing}
+If \(s_-=\frac12-u+\ii\tau\) is a nontrivial zero with \(0<u<1/2\), then
+\[
+        \Dvec(u,\tau)=(0,0).
+\]
+\end{lemma}
+
+\begin{proof}
+By \cref{cor:two-quotient-equations},
+\[
+        \NQ(s_-)=0,
+        \qquad
+        \NQ(s_+)=0.
+\]
+Therefore
+\[
+        \Ech(u,\tau)
+        =
+        \frac{0+0}{2}
+        =
+        0,
+\]
+and
+\[
+        \Och(u,\tau)
+        =
+        \frac{0-0}{2u}
+        =
+        0.
+\]
+Thus
+\[
+        \Dvec(u,\tau)=(0,0).
+\]
+\end{proof}
+
+\subsection{Bracket and residual channels}
+
+We now insert the structural expansion from
+\cref{ass:inner-quotient-expansion} into the two reflected channels.  For
+\[
+        s_\pm=\frac12\pm u+\ii\tau,
+\]
+the expansion gives
+\[
+        \NQ(s_\pm)
+        =
+        \frac{\ii}{\tau}
+        \Beff\left(\frac12\pm u,\tau\right)
+        +
+        \Rtot(s_\pm).
+\]
+
+Define the even bracket channel by
+\[
+        B_{\rm ev}(u,\tau)
+        :=
+        \frac{
+        \Beff(\frac12-u,\tau)
+        +
+        \Beff(\frac12+u,\tau)
+        }{2},
+\]
+and the divided odd bracket channel by
+\[
+        B_{\rm od}(u,\tau)
+        :=
+        \frac{
+        \Beff(\frac12-u,\tau)
+        -
+        \Beff(\frac12+u,\tau)
+        }{2u}.
+\]
+The bracket vector is
+\[
+        \Bvec(u,\tau)
+        :=
+        \left(
+        B_{\rm ev}(u,\tau),
+        B_{\rm od}(u,\tau)
+        \right).
+\]
+
+Similarly, define the even residual channel by
+\[
+        R_{\rm ev}(u,\tau)
+        :=
+        \frac{
+        \Rtot(s_-)
+        +
+        \Rtot(s_+)
+        }{2},
+\]
+and the divided odd residual channel by
+\[
+        R_{\rm od}(u,\tau)
+        :=
+        \frac{
+        \Rtot(s_-)
+        -
+        \Rtot(s_+)
+        }{2u}.
+\]
+The residual vector is
+\[
+        \Rvec(u,\tau)
+        :=
+        \left(
+        R_{\rm ev}(u,\tau),
+        R_{\rm od}(u,\tau)
+        \right).
+\]
+
+\begin{proposition}[Two-channel bracket-residual decomposition]
+\label{prop:two-channel-decomposition}
+Assume \cref{ass:inner-quotient-expansion}.  For
+\[
+        0<u\le u_0,
+        \qquad
+        \tau\ge T_0,
+\]
+one has
+\[
+        \Dvec(u,\tau)
+        =
+        \frac{\ii}{\tau}
+        \Bvec(u,\tau)
+        +
+        \Rvec(u,\tau).
+\]
+Equivalently,
+\[
+        \Ech(u,\tau)
+        =
+        \frac{\ii}{\tau}
+        B_{\rm ev}(u,\tau)
+        +
+        R_{\rm ev}(u,\tau),
+\]
+and
+\[
+        \Och(u,\tau)
+        =
+        \frac{\ii}{\tau}
+        B_{\rm od}(u,\tau)
+        +
+        R_{\rm od}(u,\tau).
+\]
+\end{proposition}
+
+\begin{proof}
+Using \cref{ass:inner-quotient-expansion} at \(s_-\) and \(s_+\), we obtain
+\[
+        \NQ(s_-)
+        =
+        \frac{\ii}{\tau}
+        \Beff\left(\frac12-u,\tau\right)
+        +
+        \Rtot(s_-),
+\]
+and
+\[
+        \NQ(s_+)
+        =
+        \frac{\ii}{\tau}
+        \Beff\left(\frac12+u,\tau\right)
+        +
+        \Rtot(s_+).
+\]
+Adding these two identities and dividing by \(2\) gives
+\[
+        \Ech(u,\tau)
+        =
+        \frac{\ii}{\tau}
+        \frac{
+        \Beff(\frac12-u,\tau)
+        +
+        \Beff(\frac12+u,\tau)
+        }2
+        +
+        \frac{\Rtot(s_-)+\Rtot(s_+)}2.
+\]
+By definition, this is
+\[
+        \Ech(u,\tau)
+        =
+        \frac{\ii}{\tau}
+        B_{\rm ev}(u,\tau)
+        +
+        R_{\rm ev}(u,\tau).
+\]
+
+Subtracting the two quotient expansions and dividing by \(2u\) gives
+\[
+        \Och(u,\tau)
+        =
+        \frac{\ii}{\tau}
+        \frac{
+        \Beff(\frac12-u,\tau)
+        -
+        \Beff(\frac12+u,\tau)
+        }{2u}
+        +
+        \frac{
+        \Rtot(s_-)
+        -
+        \Rtot(s_+)
+        }{2u}.
+\]
+By definition, this is
+\[
+        \Och(u,\tau)
+        =
+        \frac{\ii}{\tau}
+        B_{\rm od}(u,\tau)
+        +
+        R_{\rm od}(u,\tau).
+\]
+Combining the two component identities proves the vector identity.
+\end{proof}
+
+\begin{remark}[The divided odd channel is harmless only after derivative certification]
+The expression
+\[
+        \frac{\Rtot(s_-)-\Rtot(s_+)}{2u}
+\]
+is not controlled uniformly by an ordinary residual bound alone.  Uniformity
+as \(u\to0\) requires a bound for
+\[
+        \partial_\sigma \Rtot(\sigma+\ii\tau).
+\]
+This is why the inner-strip certificate must include \(\sigma\)-derivative
+constants for every residual sector.
+\end{remark}
+
+\subsection{The contradiction mechanism}
+
+The proof of the inner-strip exclusion will have the following form.  Suppose
+that an off-critical reflected zero pair exists.  By
+\cref{lem:detector-vanishing},
+\[
+        \Dvec(u,\tau)=(0,0).
+\]
+On the other hand, by \cref{prop:two-channel-decomposition},
+\[
+        \Dvec(u,\tau)
+        =
+        \frac{\ii}{\tau}\Bvec(u,\tau)
+        +
+        \Rvec(u,\tau).
+\]
+Therefore
+\[
+        \|\Dvec(u,\tau)\|
+        \ge
+        \frac{\|\Bvec(u,\tau)\|}{\tau}
+        -
+        \|\Rvec(u,\tau)\|.
+\]
+If we prove
+\[
+        \|\Bvec(u,\tau)\|\ge \gev
+\]
+and
+\[
+        \|\Rvec(u,\tau)\|
+        \le
+        \Cinner
+        \frac{\log\tau}{\tau^{3/2}},
+\]
+then
+\[
+        \|\Dvec(u,\tau)\|
+        \ge
+        \frac{\gev}{\tau}
+        -
+        \Cinner
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+The right-hand side is positive whenever
+\[
+        \sqrt{\tau}
+        >
+        \frac{\Cinner}{\gev}
+        \log\tau.
+\]
+This contradicts
+\[
+        \Dvec(u,\tau)=(0,0).
+\]
+
+Thus the entire inner-strip problem reduces to two tasks:
+
+\begin{enumerate}[label=(\roman*)]
+    \item prove or certify the bracket-vector lower bound
+    \[
+        \|\Bvec(u,\tau)\|\ge \gev;
+    \]
+
+    \item prove or certify the residual-vector upper bound
+    \[
+        \|\Rvec(u,\tau)\|
+        \le
+        \Cinner
+        \frac{\log\tau}{\tau^{3/2}}.
+    \]
+\end{enumerate}
+
+The next sections carry out these two reductions.
+
+
+% ============================================================
+% 5. Bracket-vector lower bound
+% ============================================================
+
+\section{Bracket-vector lower bound}
+\label{sec:bracket-vector}
+
+The purpose of this section is to prove that the reflected bracket vector does
+not degenerate at the critical line.  This is the main structural reason the
+inner-strip argument is different from the outer-strip argument.
+
+The one-channel bracket
+\[
+        \Beff(\sigma,\tau)
+\]
+has a lower bound away from \(\sigma=1/2\), but that lower bound degenerates as
+\(\sigma\to1/2\).  The two-channel bracket vector keeps both the value and the
+transverse derivative at the critical line.  These two quantities cannot vanish
+simultaneously.
+
+Recall the effective bracket
+\[
+\begin{aligned}
+        \Beff(\sigma,\tau)
+        &=
+        2^\sigma e^{\ii L}
+        \left(
+        \frac{12-\sigma}{48}
+        +
+        \frac{\ii X}{4}
+        \right)
+\\
+        &\quad
+        -
+        2^{-\sigma}e^{-\ii L}
+        \left(
+        \frac{11+\sigma}{24}
+        -
+        \frac{\ii X}{2}
+        \right),
+\end{aligned}
+\]
+where
+\[
+        L=\tau\log2,
+        \qquad
+        X=\Xi_{\rm end}(\tau)\in\mathbb R.
+\]
+In this section \(L\) is treated as an arbitrary real phase and \(X\) as an
+arbitrary real parameter.
+
+\subsection{Critical-line bracket value and derivative}
+
+Define the critical-line bracket value
+\[
+        B_0(L,X)
+        :=
+        \Beff\left(\frac12,\tau\right),
+\]
+and the critical-line transverse derivative
+\[
+        B_1(L,X)
+        :=
+        \partial_\sigma\Beff(\sigma,\tau)\bigg|_{\sigma=1/2}.
+\]
+
+\begin{lemma}[Critical-line bracket value]
+\label{lem:critical-bracket-value}
+For every real \(L\) and every real \(X\),
+\[
+        B_0(L,X)
+        =
+        \frac{\ii\sqrt2}{48}
+        \left(
+        24X\cos L+23\sin L
+        \right).
+\]
+In particular, \(B_0(L,X)\) is purely imaginary.
+\end{lemma}
+
+\begin{proof}
+Substitute \(\sigma=1/2\) into the bracket formula.  Since
+\[
+        2^{1/2}=\sqrt2,
+        \qquad
+        2^{-1/2}=\frac1{\sqrt2},
+\]
+we get
+\[
+\begin{aligned}
+        B_0(L,X)
+        &=
+        \sqrt2 e^{\ii L}
+        \left(
+        \frac{23}{96}
+        +
+        \frac{\ii X}{4}
+        \right)
+        -
+        \frac1{\sqrt2}e^{-\ii L}
+        \left(
+        \frac{23}{48}
+        -
+        \frac{\ii X}{2}
+        \right).
+\end{aligned}
+\]
+Putting both terms over the same denominator gives
+\[
+        B_0(L,X)
+        =
+        \frac{\sqrt2}{96}
+        \left[
+        e^{\ii L}(23+24\ii X)
+        -
+        e^{-\ii L}(46-48\ii X)
+        \right].
+\]
+Expanding into sine and cosine terms and simplifying gives
+\[
+        B_0(L,X)
+        =
+        \frac{\ii\sqrt2}{48}
+        \left(
+        24X\cos L+23\sin L
+        \right).
+\]
+\end{proof}
+
+\begin{lemma}[Critical-line bracket derivative]
+\label{lem:critical-bracket-derivative}
+For every real \(L\) and every real \(X\),
+\[
+        B_1(L,X)
+        =
+        \frac{\sqrt2}{48}
+        \left[
+        (23\log2-2)\cos L
+        -
+        24X\log2\sin L
+        \right].
+\]
+In particular, \(B_1(L,X)\) is real.
+\end{lemma}
+
+\begin{proof}
+Differentiate the bracket formula with respect to \(\sigma\).  The first
+bracket component gives
+\[
+\begin{aligned}
+        \partial_\sigma
+        \left[
+        2^\sigma e^{\ii L}
+        \left(
+        \frac{12-\sigma}{48}
+        +
+        \frac{\ii X}{4}
+        \right)
+        \right]
+        &=
+        2^\sigma e^{\ii L}
+        \left[
+        \log2
+        \left(
+        \frac{12-\sigma}{48}
+        +
+        \frac{\ii X}{4}
+        \right)
+        -
+        \frac1{48}
+        \right].
+\end{aligned}
+\]
+The second bracket component gives
+\[
+\begin{aligned}
+        \partial_\sigma
+        \left[
+        -
+        2^{-\sigma}e^{-\ii L}
+        \left(
+        \frac{11+\sigma}{24}
+        -
+        \frac{\ii X}{2}
+        \right)
+        \right]
+        &=
+        2^{-\sigma}e^{-\ii L}
+        \left[
+        \log2
+        \left(
+        \frac{11+\sigma}{24}
+        -
+        \frac{\ii X}{2}
+        \right)
+        -
+        \frac1{24}
+        \right].
+\end{aligned}
+\]
+Substituting \(\sigma=1/2\), collecting the \(e^{\ii L}\) and \(e^{-\ii L}\)
+terms, and simplifying yields
+\[
+        B_1(L,X)
+        =
+        \frac{\sqrt2}{48}
+        \left[
+        (23\log2-2)\cos L
+        -
+        24X\log2\sin L
+        \right].
+\]
+The displayed expression is real because \(L\), \(X\), and \(\log2\) are real.
+\end{proof}
+
+\subsection{Critical-line vector nondegeneracy}
+
+We now prove that \(B_0\) and \(B_1\) cannot vanish simultaneously.  More
+precisely, their combined norm has a uniform positive lower bound.
+
+Let
+\[
+        \ell:=\log2,
+        \qquad
+        a:=23\ell-2.
+\]
+Since
+\[
+        0.69<\ell<0.70,
+\]
+we have
+\[
+        a>0.
+\]
+
+\begin{proposition}[Critical-line bracket-vector lower bound]
+\label{prop:critical-vector-lower-bound}
+For every real \(L\) and every real \(X\),
+\[
+        |B_0(L,X)|^2+|B_1(L,X)|^2
+        \ge
+        \left(
+        \frac{\sqrt2}{48}(23\log2-2)
+        \right)^2.
+\]
+In particular,
+\[
+        |B_0(L,X)|^2+|B_1(L,X)|^2>0.
+\]
+\end{proposition}
+
+\begin{proof}
+By \cref{lem:critical-bracket-value,lem:critical-bracket-derivative},
+\[
+        |B_0(L,X)|^2+|B_1(L,X)|^2
+        =
+        \frac{2}{48^2}
+        \left[
+        A(L,X)^2+D(L,X)^2
+        \right],
+\]
+where
+\[
+        A(L,X):=24X\cos L+23\sin L,
+\]
+and
+\[
+        D(L,X):=(23\ell-2)\cos L-24X\ell\sin L.
+\]
+Set
+\[
+        c:=\cos L,
+        \qquad
+        s:=\sin L,
+        \qquad
+        a:=23\ell-2.
+\]
+Then
+\[
+        A=24Xc+23s,
+        \qquad
+        D=ac-24X\ell s.
+\]
+
+For fixed \(L\), the quantity
+\[
+        A^2+D^2
+\]
+is a nonnegative quadratic polynomial in \(X\).  Its minimum over real \(X\)
+is obtained by elementary projection.  A direct calculation gives
+\[
+        \min_{X\in\mathbb R}(A^2+D^2)
+        =
+        \frac{(23\ell-2\cos^2 L)^2}
+        {\ell^2+(1-\ell^2)\cos^2 L}.
+\]
+Writing
+\[
+        t:=\cos^2 L,
+        \qquad
+        0\le t\le1,
+\]
+this minimum becomes
+\[
+        \frac{(23\ell-2t)^2}{\ell^2+(1-\ell^2)t}.
+\]
+We claim that
+\[
+        \frac{(23\ell-2t)^2}{\ell^2+(1-\ell^2)t}
+        \ge
+        (23\ell-2)^2
+        =
+        a^2
+\]
+for \(0\le t\le1\).
+
+Indeed, since the denominator
+\[
+        \ell^2+(1-\ell^2)t
+\]
+is positive, it is enough to show
+\[
+        (23\ell-2t)^2
+        -
+        (23\ell-2)^2
+        \left[
+        \ell^2+(1-\ell^2)t
+        \right]
+        \ge0.
+\]
+The left-hand side factors as
+\[
+        (t-1)
+        \left(
+        529\ell^4
+        -
+        92\ell^3
+        -
+        525\ell^2
+        +
+        4t
+        \right).
+\]
+Since \(0\le t\le1\), we have
+\[
+        t-1\le0.
+\]
+Also, since \(0\le t\le1\), \(0.69<\ell<0.70\), and all coefficients are
+explicit, we have the rigorous upper bound
+\[
+\begin{aligned}
+        529\ell^4
+        -
+        92\ell^3
+        -
+        525\ell^2
+        +
+        4t
+        &\le
+        529(0.70)^4
+        -
+        92(0.69)^3
+        -
+        525(0.69)^2
+        +
+        4
+\\
+        &<
+        0.
+\end{aligned}
+\]
+Hence
+\[
+        t-1\le0
+\]
+and the second factor is strictly negative.  Their product is therefore
+nonnegative.  Therefore
+\[
+        A^2+D^2\ge a^2.
+\]
+Consequently,
+\[
+        |B_0(L,X)|^2+|B_1(L,X)|^2
+        \ge
+        \frac{2}{48^2}a^2
+        =
+        \left(
+        \frac{\sqrt2}{48}(23\log2-2)
+        \right)^2.
+\]
+This proves the proposition.
+\end{proof}
+
+\begin{remark}[Interpretation]
+The outer-strip one-channel lower bound degenerates because
+\[
+        |\Beff(\sigma,\tau)|
+\]
+can become small as \(\sigma\to1/2\).  The proposition says that the pair
+\[
+        \left(
+        \Beff\left(\frac12,\tau\right),
+        \partial_\sigma\Beff\left(\frac12,\tau\right)
+        \right)
+\]
+does not degenerate.  Thus a reflected zero pair would have to cancel not only
+the bracket value at the critical line but also its transverse slope.  The
+bracket algebra forbids this simultaneous cancellation.
+\end{remark}
+
+\subsection{Finite-width bracket certificate}
+
+The previous proposition proves the limiting lower bound at \(u=0\).  The
+inner-strip detector uses the finite-width bracket vector
+\[
+        \Bvec(u,\tau)
+        =
+        \left(
+        B_{\rm ev}(u,\tau),
+        B_{\rm od}(u,\tau)
+        \right),
+\]
+where
+\[
+        0<u\le0.01.
+\]
+As \(u\to0\),
+\[
+        B_{\rm ev}(u,\tau)
+        \to
+        B_0(L,X),
+\]
+and
+\[
+        B_{\rm od}(u,\tau)
+        \to
+        -B_1(L,X).
+\]
+The critical-line lower bound is approximately
+\[
+        \frac{\sqrt2}{48}(23\log2-2)
+        =
+        0.4107814619\ldots.
+\]
+For the public theorem, we use the deliberately smaller finite-width target
+\[
+        \gev=0.2.
+\]
+
+The finite-width inequality
+\[
+        \|\Bvec(u,\tau)\|\ge0.2
+\]
+for
+\[
+        0<u\le0.01
+\]
+is certified by a finite real interval calculation as follows.  The phase
+\(L\) is reduced modulo \(2\pi\).  For fixed \(u\) and \(L\), the squared norm
+\[
+        \|\Bvec(u,\tau)\|^2
+\]
+is an explicit quadratic polynomial in the real parameter
+\[
+        X=\Xi_{\rm end}(\tau).
+\]
+Thus the dependence on \(X\in\mathbb R\) is removed by minimizing this
+quadratic analytically over \(X\).  The remaining verification is a compact
+two-variable interval problem in
+\[
+        0\le u\le0.01,
+        \qquad
+        0\le L\le2\pi.
+\]
+The public certificate proves the conservative bound
+\[
+        \|\Bvec(u,\tau)\|\ge0.2.
+\]
+
+\begin{assumption}[Finite inner bracket-vector certificate]
+\label{ass:finite-bracket-vector-certificate}
+The public file
+\[
+        \texttt{inner\_bracket\_vector\_certificate.json}
+\]
+has status
+\[
+        \texttt{proved}
+\]
+and certifies
+\[
+        \|\Bvec(u,\tau)\|\ge\gev
+\]
+for
+\[
+        0<u\le0.01,
+        \qquad
+        \tau\ge T_0,
+\]
+with
+\[
+        \gev=0.2.
+\]
+\end{assumption}
+
+\begin{remark}[Why a finite certificate is acceptable here]
+The limiting lower bound at \(u=0\) is analytic.  Passing from \(u=0\) to
+\(0<u\le0.01\) is a finite compact verification problem for an explicit
+elementary expression.  No zeta-function estimates, no stationary phase, and
+no residual analysis enter this bracket-vector certificate.  It is a small
+real interval problem, separate from the much larger residual certificate.
+\end{remark}
+
+\begin{proposition}[Certified inner bracket-vector lower bound]
+\label{prop:certified-inner-bracket-vector}
+Assume \cref{ass:finite-bracket-vector-certificate}.  Then, for every
+\[
+        0<u\le0.01,
+        \qquad
+        \tau\ge T_0,
+\]
+one has
+\[
+        \|\Bvec(u,\tau)\|\ge0.2.
+\]
+\end{proposition}
+
+\begin{proof}
+This is exactly the statement certified by
+\cref{ass:finite-bracket-vector-certificate}.
+\end{proof}
+
+
+% ============================================================
+% 6. Residual-vector bound from value and derivative certificates
+% ============================================================
+
+\section{Residual-vector bound}
+\label{sec:residual-vector}
+
+We now turn from the bracket vector to the residual vector.  This is the place
+where the inner-strip argument genuinely differs from the outer-strip
+argument.
+
+In the outer strip, it is enough to certify the residual itself:
+\[
+        |\Rtot(s)|
+        \le
+        C
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+For the inner reflected detector, this controls the even channel but not the
+divided odd channel.  The odd channel contains the quotient
+\[
+        \frac{\Rtot(s_-)-\Rtot(s_+)}{2u}.
+\]
+A uniform bound for this expression as \(u\to0\) requires a bound for
+\[
+        \partial_\sigma\Rtot(\sigma+\ii\tau).
+\]
+Thus the inner-strip certificate must include both ordinary residual constants
+and \(\sigma\)-derivative residual constants.
+
+\subsection{Sector-level assumptions}
+
+For clarity we restate the sector certificate interface in the form used in
+this section.  The total residual is decomposed as
+\[
+        \Rtot
+        =
+        \sum_{\nu\in\mathcal S}
+        \mathcal R_\nu,
+\]
+where
+\[
+        \mathcal S
+        :=
+        \{
+        {\rm band},
+        {\rm bd},
+        {\rm far},
+        {\rm end},
+        {\rm nonstat},
+        {\rm floor},
+        {\rm core}
+        \}.
+\]
+
+\begin{assumption}[Inner residual value and derivative certificates]
+\label{ass:inner-residual-certificates}
+For each
+\[
+        \nu\in\mathcal S,
+\]
+there exist constants
+\[
+        C_{\nu,0}\ge0,
+        \qquad
+        C_{\nu,1}\ge0,
+\]
+such that, for every
+\[
+        \left|\sigma-\frac12\right|\le0.01,
+        \qquad
+        \tau\ge T_0,
+\]
+one has
+\[
+        |\mathcal R_\nu(\sigma+\ii\tau)|
+        \le
+        C_{\nu,0}
+        \frac{\log\tau}{\tau^{3/2}},
+\]
+and
+\[
+        |\partial_\sigma\mathcal R_\nu(\sigma+\ii\tau)|
+        \le
+        C_{\nu,1}
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+\end{assumption}
+
+Define
+\[
+        \Czero
+        :=
+        \sum_{\nu\in\mathcal S}
+        C_{\nu,0},
+\]
+and
+\[
+        \Cone
+        :=
+        \sum_{\nu\in\mathcal S}
+        C_{\nu,1}.
+\]
+Finally define
+\[
+        \Cinner
+        :=
+        \sqrt{\Czero^2+\Cone^2}.
+\]
+
+\begin{remark}[Why the constants are summed before taking the vector norm]
+The residual vector has two components.  The even component is bounded by the
+sum of the ordinary sector constants, and the divided odd component is bounded
+by the sum of the derivative sector constants.  Only after the two scalar
+bounds are obtained do we take the Euclidean vector norm.  This is why
+\[
+        \Cinner=\sqrt{\Czero^2+\Cone^2}
+\]
+is the correct inner residual constant.
+\end{remark}
+
+\subsection{Even residual channel}
+
+Recall
+\[
+        R_{\rm ev}(u,\tau)
+        =
+        \frac{\Rtot(s_-)+\Rtot(s_+)}2,
+\]
+where
+\[
+        s_-=\frac12-u+\ii\tau,
+        \qquad
+        s_+=\frac12+u+\ii\tau.
+\]
+
+\begin{lemma}[Even residual bound]
+\label{lem:even-residual-bound}
+Assume \cref{ass:inner-residual-certificates}.  For
+\[
+        0<u\le0.01,
+        \qquad
+        \tau\ge T_0,
+\]
+one has
+\[
+        |R_{\rm ev}(u,\tau)|
+        \le
+        \Czero
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+\end{lemma}
+
+\begin{proof}
+By the triangle inequality,
+\[
+        |R_{\rm ev}(u,\tau)|
+        \le
+        \frac12
+        |\Rtot(s_-)|
+        +
+        \frac12
+        |\Rtot(s_+)|.
+\]
+Since
+\[
+        \Rtot=\sum_{\nu\in\mathcal S}\mathcal R_\nu,
+\]
+we have
+\[
+        |\Rtot(s_\pm)|
+        \le
+        \sum_{\nu\in\mathcal S}
+        |\mathcal R_\nu(s_\pm)|.
+\]
+Both \(s_-\) and \(s_+\) lie in the certified inner strip
+\[
+        \left|\sigma-\frac12\right|\le0.01.
+\]
+Therefore, by \cref{ass:inner-residual-certificates},
+\[
+        |\mathcal R_\nu(s_\pm)|
+        \le
+        C_{\nu,0}
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+Summing over sectors gives
+\[
+        |\Rtot(s_\pm)|
+        \le
+        \Czero
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+Hence
+\[
+        |R_{\rm ev}(u,\tau)|
+        \le
+        \Czero
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+\end{proof}
+
+\subsection{Divided odd residual channel}
+
+The divided odd residual channel is
+\[
+        R_{\rm od}(u,\tau)
+        =
+        \frac{\Rtot(s_-)-\Rtot(s_+)}{2u}.
+\]
+The point of certifying \(\partial_\sigma\Rtot\) is exactly to control this
+quantity uniformly as \(u\to0\).
+
+\begin{lemma}[Divided odd residual bound]
+\label{lem:odd-residual-bound}
+Assume \cref{ass:inner-residual-certificates}.  For
+\[
+        0<u\le0.01,
+        \qquad
+        \tau\ge T_0,
+\]
+one has
+\[
+        |R_{\rm od}(u,\tau)|
+        \le
+        \Cone
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+\end{lemma}
+
+\begin{proof}
+For fixed \(\tau\), define
+\[
+        F(\sigma):=\Rtot(\sigma+\ii\tau).
+\]
+Then
+\[
+        R_{\rm od}(u,\tau)
+        =
+        \frac{
+        F(\frac12-u)-F(\frac12+u)
+        }{2u}.
+\]
+By the mean value theorem applied to the real variable \(\sigma\),
+\[
+        |R_{\rm od}(u,\tau)|
+        \le
+        \sup_{\left|\sigma-\frac12\right|\le u}
+        |\partial_\sigma\Rtot(\sigma+\ii\tau)|.
+\]
+Since \(u\le0.01\), the supremum is taken inside the certified inner strip
+\[
+        \left|\sigma-\frac12\right|\le0.01.
+\]
+Using
+\[
+        \Rtot=\sum_{\nu\in\mathcal S}\mathcal R_\nu,
+\]
+we have
+\[
+        |\partial_\sigma\Rtot(\sigma+\ii\tau)|
+        \le
+        \sum_{\nu\in\mathcal S}
+        |\partial_\sigma\mathcal R_\nu(\sigma+\ii\tau)|.
+\]
+By \cref{ass:inner-residual-certificates},
+\[
+        |\partial_\sigma\mathcal R_\nu(\sigma+\ii\tau)|
+        \le
+        C_{\nu,1}
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+Therefore
+\[
+        |\partial_\sigma\Rtot(\sigma+\ii\tau)|
+        \le
+        \Cone
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+This proves
+\[
+        |R_{\rm od}(u,\tau)|
+        \le
+        \Cone
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+\end{proof}
+
+\begin{remark}[No loss as \(u\to0\)]
+The divided odd residual channel contains \(1/u\), but the mean value theorem
+removes this apparent singularity.  The price is exactly the
+\(\sigma\)-derivative residual certificate.  This is why the inner-strip
+certificate is finite but strictly stronger than the outer-strip certificate.
+\end{remark}
+
+\subsection{Residual-vector bound}
+
+We now combine the two scalar residual estimates.
+
+\begin{proposition}[Two-channel residual-vector bound]
+\label{prop:residual-vector-bound}
+Assume \cref{ass:inner-residual-certificates}.  For
+\[
+        0<u\le0.01,
+        \qquad
+        \tau\ge T_0,
+\]
+the residual vector
+\[
+        \Rvec(u,\tau)
+        =
+        \left(
+        R_{\rm ev}(u,\tau),
+        R_{\rm od}(u,\tau)
+        \right)
+\]
+satisfies
+\[
+        \|\Rvec(u,\tau)\|
+        \le
+        \Cinner
+        \frac{\log\tau}{\tau^{3/2}},
+\]
+where
+\[
+        \Cinner
+        =
+        \sqrt{\Czero^2+\Cone^2}.
+\]
+\end{proposition}
+
+\begin{proof}
+By \cref{lem:even-residual-bound},
+\[
+        |R_{\rm ev}(u,\tau)|
+        \le
+        \Czero
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+By \cref{lem:odd-residual-bound},
+\[
+        |R_{\rm od}(u,\tau)|
+        \le
+        \Cone
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+Therefore, using the Euclidean norm on \(\mathbb C^2\),
+\[
+\begin{aligned}
+        \|\Rvec(u,\tau)\|
+        &=
+        \left(
+        |R_{\rm ev}(u,\tau)|^2
+        +
+        |R_{\rm od}(u,\tau)|^2
+        \right)^{1/2}
+\\
+        &\le
+        \left(
+        \Czero^2+\Cone^2
+        \right)^{1/2}
+        \frac{\log\tau}{\tau^{3/2}}
+\\
+        &=
+        \Cinner
+        \frac{\log\tau}{\tau^{3/2}}.
+\end{aligned}
+\]
+\end{proof}
+
+\subsection{Certificate form of the residual-vector theorem}
+
+For publication and reproducibility, the constants in
+\cref{prop:residual-vector-bound} are not to be copied by hand from separate
+calculations.  They must be produced by a strict merge of the sector
+certificates.
+
+\begin{assumption}[Final inner residual certificate]
+\label{ass:final-inner-residual-certificate}
+The file
+\[
+        \texttt{INNER\_STRIP\_CERTIFICATE\_SAFE.json}
+\]
+contains, for every
+\[
+        \nu\in\mathcal S,
+\]
+a dependency file with status
+\[
+        \texttt{proved}
+\]
+and with fields
+\[
+        \texttt{C\_value\_upper\_safe},
+        \qquad
+        \texttt{C\_sigma\_derivative\_upper\_safe}.
+\]
+The final file has status
+\[
+        \texttt{inner\_full\_certificate}
+\]
+and records the merged values
+\[
+        \Czero,
+        \qquad
+        \Cone,
+        \qquad
+        \Cinner.
+\]
+\end{assumption}
+
+\begin{corollary}[Certified residual-vector estimate]
+\label{cor:certified-residual-vector-estimate}
+Assume \cref{ass:final-inner-residual-certificate}.  Then the residual vector
+satisfies
+\[
+        \|\Rvec(u,\tau)\|
+        \le
+        \Cinner
+        \frac{\log\tau}{\tau^{3/2}}
+\]
+for every
+\[
+        0<u\le0.01,
+        \qquad
+        \tau\ge T_0.
+\]
+\end{corollary}
+
+\begin{proof}
+The final certificate supplies the sector constants satisfying
+\cref{ass:inner-residual-certificates}.  The result then follows from
+\cref{prop:residual-vector-bound}.
+\end{proof}
+
+\begin{remark}[What the final certificate must refuse]
+A final certificate is not acceptable if any sector lacks either its ordinary
+value constant or its \(\sigma\)-derivative constant.  In particular, a file
+which certifies only
+\[
+        |\mathcal R_\nu(s)|
+\]
+but not
+\[
+        |\partial_\sigma\mathcal R_\nu(s)|
+\]
+does not certify the inner-strip theorem.  The divided odd channel requires the
+derivative data.
+\end{remark}
+
+% ============================================================
+% 7. Finite certifiability of the derivative residual sectors
+% ============================================================
+
+\section{Finite certifiability of the derivative residual sectors}
+\label{sec:sector-certifiability}
+
+The previous section showed that the inner-strip residual vector is controlled
+once every residual sector is certified both in value and in
+\(\sigma\)-derivative.  We now explain why these derivative certificates are
+finite in exactly the same sense as the outer-strip residual certificate.
+
+The point of this section is not to reproduce every numerical enclosure.
+Those belong to the public certificate files.  The point is to show that the
+\(\sigma\)-derivative operation does not introduce any new analytic
+non-compactness, any new stationary phase family, or any untracked sector.  It
+only differentiates explicit amplitudes, explicit algebraic coefficients, and
+the explicit quotient projection.
+
+Thus the inner-strip derivative certificate is a finite enhancement of the
+outer-strip certificate, not a new asymptotic theory.
+
+\subsection{General derivative principle}
+
+Each residual sector in the quotient expansion has the schematic form
+\[
+        \mathcal R_\nu(s)
+        =
+        \Pi_Q(s)\,
+        \mathcal A_\nu(s)
+\]
+or a finite sum of such terms, where
+\[
+        \Pi_Q(s)
+        =
+        \frac{\ii\tau}{(1-s)(s+1)}
+\]
+is the quotient projection and \(\mathcal A_\nu(s)\) is a sector amplitude,
+integral, or grouped mode sum.
+
+The \(\sigma\)-derivative is therefore
+\[
+        \partial_\sigma \mathcal R_\nu(s)
+        =
+        (\partial_\sigma\Pi_Q(s))\mathcal A_\nu(s)
+        +
+        \Pi_Q(s)\partial_\sigma\mathcal A_\nu(s),
+\]
+with
+\[
+        \partial_\sigma\Pi_Q(s)
+        =
+        \Pi_Q(s)
+        \left(
+        \frac1{1-s}
+        -
+        \frac1{s+1}
+        \right).
+\]
+Equivalently,
+\[
+        \partial_\sigma\Pi_Q(s)
+        =
+        \frac{2s\,\ii\tau}{[(1-s)(s+1)]^2}.
+\]
+
+\begin{remark}[Projection derivative is mandatory]
+A derivative certificate which differentiates the sector amplitudes but omits
+\[
+        \partial_\sigma\Pi_Q(s)
+\]
+does not certify the inner-strip theorem.  The quotient projection depends on
+\(\sigma\), and its derivative is part of the residual derivative.
+\end{remark}
+
+On the inner strip
+\[
+        \left|\sigma-\frac12\right|\le0.01,
+        \qquad
+        \tau\ge10,
+\]
+the projection and its \(\sigma\)-derivative are elementary rational functions
+of \(s\) and are uniformly bounded by explicit powers of \(1/\tau\).  Thus the
+projection derivative introduces no new analytic difficulty.
+
+\subsection{Algebraic coefficient derivatives}
+
+The two main \(J\)-side coefficients are
+\[
+        s(s-2)
+\]
+and
+\[
+        (1-s)(s+1).
+\]
+Their \(\sigma\)-derivatives are
+\[
+        \partial_\sigma[s(s-2)]
+        =
+        2s-2,
+\]
+and
+\[
+        \partial_\sigma[(1-s)(s+1)]
+        =
+        -2s.
+\]
+These are explicit algebraic factors.  On the inner strip they have size
+\(O(\tau)\), whereas the original quadratic coefficients have size
+\(O(\tau^2)\).  Therefore differentiating the coefficients never worsens the
+asymptotic order of any sector after the same quotient normalization is
+applied.
+
+\begin{remark}[No hidden coefficient sector]
+The coefficient derivatives are assigned to the same sector as the
+undifferentiated coefficient.  They are not a new residual type and do not
+create an eighth sector.
+\end{remark}
+
+\subsection{Compact-boundary sector}
+
+The compact-boundary sector is the delicate sector in the outer-strip
+certificate.  It is also the most important sector for the derivative
+certificate.
+
+In the compact-boundary scaling, the relevant amplitudes are built from factors
+of the form
+\[
+        (2+wy)^{-\sigma-2}
+\]
+and
+\[
+        (2+wy)^{\sigma-3},
+\]
+together with their frozen endpoint counterparts
+\[
+        2^{-\sigma-2},
+        \qquad
+        2^{\sigma-3}.
+\]
+Their \(\sigma\)-derivatives are explicit:
+\[
+        \partial_\sigma(2+wy)^{-\sigma-2}
+        =
+        -\log(2+wy)(2+wy)^{-\sigma-2},
+\]
+\[
+        \partial_\sigma(2+wy)^{\sigma-3}
+        =
+        \log(2+wy)(2+wy)^{\sigma-3},
+\]
+and
+\[
+        \partial_\sigma 2^{-\sigma-2}
+        =
+        -\log2\,2^{-\sigma-2},
+\]
+\[
+        \partial_\sigma 2^{\sigma-3}
+        =
+        \log2\,2^{\sigma-3}.
+\]
+
+In the compact-boundary certificate the cutoff satisfies
+\[
+        0\le y\le2Y,
+        \qquad
+        Y=128.
+\]
+Therefore
+\[
+        0\le y\le256.
+\]
+For
+\[
+        0\le w\le\frac1{\sqrt{10}},
+\]
+the logarithmic factors
+\[
+        \log(2+wy)
+\]
+are bounded on the compact certificate domain.  Hence differentiating in
+\(\sigma\) only inserts bounded logarithmic amplitude factors inside the same
+finite collection of Arb boxes.
+
+The compact-boundary derivative verifier must therefore enclose, on every box,
+both the original compact-boundary integrand and its \(\sigma\)-derivative.
+For a grouped contribution of the form
+\[
+        G_\nu(s)
+        =
+        c_+(s)\Delta_+(s)
+        +
+        c_-(s)\Delta_-(s),
+\]
+the derivative is
+\[
+        \partial_\sigma G_\nu(s)
+        =
+        c_+'(s)\Delta_+(s)
+        +
+        c_+(s)\partial_\sigma\Delta_+(s)
+        +
+        c_-'(s)\Delta_-(s)
+        +
+        c_-(s)\partial_\sigma\Delta_-(s).
+\]
+If this grouped contribution is then multiplied by the quotient projection,
+one must also apply
+\[
+        \partial_\sigma(\Pi_Q G_\nu)
+        =
+        (\partial_\sigma\Pi_Q)G_\nu
+        +
+        \Pi_Q\partial_\sigma G_\nu.
+\]
+
+\begin{proposition}[Finite certifiability of the compact-boundary derivative]
+\label{prop:bd-derivative-certifiable}
+The compact-boundary sector admits a finite \(\sigma\)-derivative certificate
+in the inner-strip norm
+\[
+        |\partial_\sigma\mathcal R_{\rm bd}(s)|
+        \le
+        C_{{\rm bd},1}
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+\end{proposition}
+
+\begin{proof}
+The compact-boundary sector is already reduced to finitely many compact boxes
+in the variables
+\[
+        \sigma,\quad w,\quad r,\quad y,\quad \lambda.
+\]
+Differentiating with respect to \(\sigma\) leaves the phases unchanged and
+only differentiates explicit amplitudes, explicit algebraic coefficients, and
+the quotient projection.  The amplitude derivatives insert the bounded factors
+\[
+        \log(2+wy)
+        \quad\text{and}\quad
+        \log2
+\]
+on the compact support \(0\le y\le256\).  The coefficient and projection
+derivatives are explicit rational functions of \(s\).  Therefore the same
+finite box subdivision certifies the derivative integrands by Arb ball
+arithmetic.  Summing the resulting box enclosures gives a finite constant
+\(C_{{\rm bd},1}\).
+\end{proof}
+
+\subsection{Compact-complement sectors}
+
+The compact complement is split into the same three hooks as in the
+outer-strip certificate:
+\[
+        C_{\chi^c}
+        =
+        C_{\chi^c,{\rm tail}}
+        +
+        C_{\chi^c,{\rm nonstat}}
+        +
+        C_{\chi^c,{\rm stationary}}.
+\]
+For the inner strip, each hook receives a derivative companion.
+
+\subsubsection*{Tail hook}
+
+The compact-complement tail hook is controlled by derivative envelopes followed
+by integrations by parts.  The derivative certificate requires envelopes not
+only for the original amplitude derivatives but also for their
+\(\sigma\)-derivatives.  Schematically, if the original tail hook certifies
+\[
+        |H'(y)|\le M_1,
+        \qquad
+        |H''(y)|\le M_2,
+\]
+then the derivative hook certifies
+\[
+        |\partial_\sigma H'(y)|\le M_{1,\sigma},
+        \qquad
+        |\partial_\sigma H''(y)|\le M_{2,\sigma}.
+\]
+The same integrations by parts then produce the derivative tail constant
+\[
+        C_{\chi^c,{\rm tail},1}.
+\]
+
+\subsubsection*{Nonstationary hook}
+
+The nonstationary hook is based on a lower bound for the phase derivative.  The
+phase derivative is independent of \(\sigma\); only amplitudes and coefficients
+are differentiated.  Hence the same nonstationary box partition and the same
+phase-separation condition apply to the derivative integrands.  The
+integration-by-parts bound is repeated with the \(\sigma\)-differentiated
+amplitudes.
+
+\subsubsection*{Stationary-overlap hook}
+
+The stationary-overlap hook is compact and is certified by direct Arb
+enclosure.  Its derivative version is obtained by enclosing the
+\(\sigma\)-differentiated integrand on the same compact boxes.
+
+\begin{proposition}[Finite certifiability of compact-complement derivatives]
+\label{prop:chic-derivative-certifiable}
+Each compact-complement hook admits a finite \(\sigma\)-derivative certificate:
+\[
+        C_{\chi^c,{\rm tail},1},
+        \qquad
+        C_{\chi^c,{\rm nonstat},1},
+        \qquad
+        C_{\chi^c,{\rm stationary},1}.
+\]
+Consequently the full compact-complement derivative contribution is finitely
+certifiable.
+\end{proposition}
+
+\begin{proof}
+The tail hook uses derivative-envelope bounds; differentiating with respect to
+\(\sigma\) replaces the original envelopes by envelopes for the
+\(\sigma\)-differentiated amplitudes.  The nonstationary hook uses the same
+phase-separation boxes because the phases do not depend on \(\sigma\).  The
+stationary-overlap hook is compact and is directly enclosed after
+differentiation.  Each operation is performed on a finite box subdivision, and
+all differentiated amplitudes are explicit elementary functions.  Therefore
+all three derivative constants are finite and certifiable.
+\end{proof}
+
+\subsection{Band sector}
+
+The band sector comes from the quotient stationary range
+\[
+        \frac{\tau}{4\pi}<m\le\frac{\tau}{2\pi}.
+\]
+The relevant sums contain powers such as
+\[
+        m^{-s},
+        \qquad
+        m^{-(1-s)}.
+\]
+Differentiating in \(\sigma\) gives
+\[
+        \partial_\sigma m^{-s}
+        =
+        -(\log m)m^{-s},
+\]
+and
+\[
+        \partial_\sigma m^{-(1-s)}
+        =
+        (\log m)m^{-(1-s)}.
+\]
+On the band,
+\[
+        m\asymp \tau,
+\]
+so
+\[
+        \log m\le C\log\tau
+\]
+for an explicit constant \(C\).  The Poisson endpoint expansion and the
+nonstationary dual-frequency estimates therefore remain finite after
+differentiation, with derivative amplitudes containing at most logarithmic
+factors.
+
+\begin{proposition}[Finite certifiability of the band derivative]
+\label{prop:band-derivative-certifiable}
+The band residual admits a finite \(\sigma\)-derivative certificate
+\[
+        |\partial_\sigma\mathcal R_{\rm band}(s)|
+        \le
+        C_{{\rm band},1}
+        \frac{\log\tau}{\tau^{3/2}}
+\]
+on the certified inner strip.
+\end{proposition}
+
+\begin{proof}
+The differentiated band sums are obtained from the original band sums by
+inserting factors \(\pm\log m\).  In the band range \(m\asymp\tau\), these
+factors are bounded by explicit multiples of \(\log\tau\).  The same Poisson
+endpoint decomposition applies.  The endpoint stationary contributions are
+differentiated explicitly, and the nonstationary dual-frequency tails are
+bounded by the same integration-by-parts scheme with differentiated
+amplitudes.  Thus the band derivative is controlled in the same residual norm,
+with a finite constant \(C_{{\rm band},1}\).
+\end{proof}
+
+\subsection{Endpoint sector}
+
+The endpoint sector contains the regularized endpoint scalar
+\[
+        X=\Xi_{\rm end}(\tau).
+\]
+This scalar depends on \(\tau\), but not on \(\sigma\).  Therefore
+\(\partial_\sigma\) acts only on the explicit powers and coefficients in the
+endpoint bracket and endpoint residual.
+
+The relevant differentiated factors are combinations of
+\[
+        2^\sigma,
+        \qquad
+        2^{-\sigma},
+        \qquad
+        12-\sigma,
+        \qquad
+        11+\sigma,
+\]
+whose derivatives are elementary:
+\[
+        \partial_\sigma 2^\sigma=(\log2)2^\sigma,
+\]
+\[
+        \partial_\sigma 2^{-\sigma}=-(\log2)2^{-\sigma},
+\]
+\[
+        \partial_\sigma(12-\sigma)=-1,
+\]
+and
+\[
+        \partial_\sigma(11+\sigma)=1.
+\]
+
+\begin{proposition}[Finite certifiability of the endpoint derivative]
+\label{prop:endpoint-derivative-certifiable}
+The endpoint residual admits a finite \(\sigma\)-derivative certificate
+\[
+        |\partial_\sigma\mathcal R_{\rm end}(s)|
+        \le
+        C_{{\rm end},1}
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+\end{proposition}
+
+\begin{proof}
+The endpoint residual is an explicit finite combination of the real scalar
+\(\Xi_{\rm end}(\tau)\), powers \(2^{\pm\sigma}\), and algebraic coefficients
+in \(\sigma\).  Since \(\Xi_{\rm end}\) is independent of \(\sigma\), the
+\(\sigma\)-derivative is obtained by differentiating only elementary factors.
+The resulting expression is explicit and is bounded by the same interval
+method used for the endpoint sector itself.
+\end{proof}
+
+\subsection{Far stationary sector}
+
+The far stationary sector is controlled away from the endpoint-stationary
+transition.  Its amplitudes depend on \(\sigma\) through powers of the
+stationary point
+\[
+        x_{m,*}
+        =
+        \frac{\tau}{2\pi m}
+\]
+and through explicit algebraic coefficients.  Differentiating those powers
+inserts logarithmic factors such as
+\[
+        \log x_{m,*}.
+\]
+In the far stationary range, \(x_{m,*}\) stays in the same controlled domain as
+in the original stationary analysis.  The differentiated stationary remainder
+therefore has the same summability structure, with explicit logarithmic
+weights.
+
+\begin{proposition}[Finite certifiability of the far stationary derivative]
+\label{prop:far-derivative-certifiable}
+The far stationary residual admits a finite \(\sigma\)-derivative certificate
+\[
+        |\partial_\sigma\mathcal R_{\rm far}(s)|
+        \le
+        C_{{\rm far},1}
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+\end{proposition}
+
+\begin{proof}
+The far stationary expansion is uniform away from the boundary transition.
+Differentiating with respect to \(\sigma\) differentiates only amplitudes and
+coefficients; the stationary phase location and curvature are independent of
+\(\sigma\).  The differentiated amplitudes contain logarithmic factors
+\(\log x_{m,*}\), which are explicitly bounded on the far stationary boxes.
+The same summation and interval enclosure used for the undifferentiated far
+sector therefore gives a finite derivative constant.
+\end{proof}
+
+\subsection{Always-nonstationary sector}
+
+The always-nonstationary sector is controlled by integration by parts in
+regions where the phase derivative is separated from zero.  The phases do not
+depend on \(\sigma\).  Therefore the nonstationary separation is unchanged
+under \(\partial_\sigma\).
+
+Differentiating the sector only differentiates amplitudes, coefficients, and
+possibly the quotient projection.  The differentiated amplitudes contain
+bounded logarithmic factors on each certified box.
+
+\begin{proposition}[Finite certifiability of the nonstationary derivative]
+\label{prop:nonstat-derivative-certifiable}
+The always-nonstationary residual admits a finite \(\sigma\)-derivative
+certificate
+\[
+        |\partial_\sigma\mathcal R_{\rm nonstat}(s)|
+        \le
+        C_{{\rm nonstat},1}
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+\end{proposition}
+
+\begin{proof}
+The integration-by-parts denominators are phase derivatives and are independent
+of \(\sigma\).  Hence the same lower bounds for the phase derivatives apply to
+the differentiated sector.  The \(\sigma\)-derivative acts only on elementary
+amplitudes, coefficients, and the projection.  These differentiated terms are
+explicit and are enclosed on the same finite partition.  Thus the
+nonstationary derivative sector is finitely certifiable.
+\end{proof}
+
+\subsection{Floor and core sectors}
+
+The floor sector is eliminated by the same half-open convention as in the
+outer-strip proof.  If
+\[
+        \mathcal R_{\rm floor}=0,
+\]
+then also
+\[
+        \partial_\sigma\mathcal R_{\rm floor}=0.
+\]
+
+The core sector consists of algebraic quotient-normalization corrections and
+coefficient mismatches.  These are explicit functions of \(s\), \(\tau\), and
+the quotient projection.  Differentiating the core sector gives explicit
+rational functions and elementary factors, all bounded on the inner strip.
+
+\begin{proposition}[Finite certifiability of floor and core derivatives]
+\label{prop:floor-core-derivative-certifiable}
+The floor and core residuals admit finite derivative certificates.  In
+particular, if the floor sector is identically zero, then
+\[
+        C_{{\rm floor},1}=0.
+\]
+The core derivative satisfies
+\[
+        |\partial_\sigma\mathcal R_{\rm core}(s)|
+        \le
+        C_{{\rm core},1}
+        \frac{\log\tau}{\tau^{3/2}}
+\]
+for a finite explicit constant \(C_{{\rm core},1}\).
+\end{proposition}
+
+\begin{proof}
+The floor statement is immediate if the floor residual is identically zero.
+The core sector is algebraic in the quotient coefficients, coefficient ratios,
+and projection factors.  Its \(\sigma\)-derivative is obtained by differentiating
+explicit rational functions of \(s\).  On
+\[
+        \left|\sigma-\frac12\right|\le0.01,
+        \qquad
+        \tau\ge10,
+\]
+these rational functions have explicit interval bounds.  Therefore the core
+derivative is finitely certifiable.
+\end{proof}
+
+\subsection{Summary of derivative certifiability}
+
+Combining the preceding propositions, every residual sector admits a
+\(\sigma\)-derivative certificate in the inner-strip norm.  Therefore the only
+remaining task is computational: produce the seven sector JSON files with both
+ordinary and derivative constants, and merge them into the final public
+certificate.
+
+\begin{theorem}[Finite certifiability of the inner residual vector]
+\label{thm:finite-certifiability-inner-residual}
+The inner-strip residual-vector bound
+\[
+        \|\Rvec(u,\tau)\|
+        \le
+        \Cinner
+        \frac{\log\tau}{\tau^{3/2}}
+\]
+is finitely certifiable from the seven sector certificates
+\[
+        \{
+        {\rm band},
+        {\rm bd},
+        {\rm far},
+        {\rm end},
+        {\rm nonstat},
+        {\rm floor},
+        {\rm core}
+        \},
+\]
+provided each sector certificate contains both a value constant and a
+\(\sigma\)-derivative constant.
+\end{theorem}
+
+\begin{proof}
+By
+\cref{prop:bd-derivative-certifiable,prop:chic-derivative-certifiable,prop:band-derivative-certifiable,prop:endpoint-derivative-certifiable,prop:far-derivative-certifiable,prop:nonstat-derivative-certifiable,prop:floor-core-derivative-certifiable},
+each sector derivative is finitely certifiable.  The ordinary sector residuals
+are the same sector residuals as in the outer-strip certificate.  Once the
+ordinary and derivative constants are available, the residual-vector bound is
+exactly \cref{prop:residual-vector-bound}.
+\end{proof}
+
+\begin{remark}[What has been reduced to computation]
+The analytic work in this section shows that no new infinite analytic problem
+appears after differentiating in \(\sigma\).  The derivative certificate is a
+finite interval-arithmetic problem on the same structural decomposition as the
+outer-strip certificate.  The public proof is complete only after the final
+certificate file records the corresponding constants.
+\end{remark}
+
+
+
+% ============================================================
+% 8. Certified inner-strip exclusion theorem
+% ============================================================
+
+\section{Certified inner-strip exclusion}
+\label{sec:inner-exclusion}
+
+We now combine the reflected zero-pair identity, the two-channel
+bracket-residual decomposition, the bracket-vector lower bound, and the
+residual-vector estimate.
+
+The proof is formally parallel to the outer-strip exclusion proof, but with two
+important differences:
+
+\begin{enumerate}[label=(\roman*)]
+    \item the scalar bracket lower bound is replaced by the vector lower bound
+    \[
+            \|\Bvec(u,\tau)\|\ge \gev;
+    \]
+
+    \item the scalar residual bound is replaced by the residual-vector bound
+    \[
+            \|\Rvec(u,\tau)\|
+            \le
+            \Cinner
+            \frac{\log\tau}{\tau^{3/2}}.
+    \]
+\end{enumerate}
+
+The advantage of the two-channel formulation is that it remains meaningful as
+\[
+        u\to0.
+\]
+
+\begin{theorem}[Conditional certified inner-strip exclusion]
+\label{thm:conditional-certified-inner-strip}
+Assume the structural quotient expansion
+\[
+        \NQ(s)
+        =
+        \frac{\ii}{\tau}\Beff(\sigma,\tau)
+        +
+        \Rtot(s)
+\]
+from \cref{ass:inner-quotient-expansion}.  Assume also the finite bracket-vector
+certificate of \cref{ass:finite-bracket-vector-certificate} and the final
+inner residual certificate of \cref{ass:final-inner-residual-certificate}.
+
+Let
+\[
+        0<u\le0.01,
+        \qquad
+        s_\pm=\frac12\pm u+\ii\tau.
+\]
+If \(T\ge T_0\) satisfies
+\[
+        \sqrt T
+        >
+        \frac{\Cinner}{\gev}
+        \log T,
+\]
+then there is no reflected off-critical zero pair
+\[
+        s_-=\frac12-u+\ii\tau,
+        \qquad
+        s_+=\frac12+u+\ii\tau
+\]
+with
+\[
+        \tau\ge T.
+\]
+Equivalently, no nontrivial zero exists in the inner strip
+\[
+        0<\left|\Re s-\frac12\right|\le0.01,
+        \qquad
+        \Im s\ge T.
+\]
+\end{theorem}
+
+\begin{proof}
+Suppose, for contradiction, that
+\[
+        s_-=\frac12-u+\ii\tau
+\]
+is a nontrivial zero with
+\[
+        0<u\le0.01,
+        \qquad
+        \tau\ge T.
+\]
+By \cref{lem:reflected-zero-pair}, the reflected point
+\[
+        s_+=\frac12+u+\ii\tau
+\]
+is also a nontrivial zero.  Hence, by \cref{lem:detector-vanishing},
+\[
+        \Dvec(u,\tau)=(0,0).
+\]
+
+On the other hand, by the two-channel decomposition
+\cref{prop:two-channel-decomposition},
+\[
+        \Dvec(u,\tau)
+        =
+        \frac{\ii}{\tau}\Bvec(u,\tau)
+        +
+        \Rvec(u,\tau).
+\]
+Therefore
+\[
+        \|\Dvec(u,\tau)\|
+        \ge
+        \frac{\|\Bvec(u,\tau)\|}{\tau}
+        -
+        \|\Rvec(u,\tau)\|.
+\]
+By \cref{prop:certified-inner-bracket-vector},
+\[
+        \|\Bvec(u,\tau)\|\ge \gev.
+\]
+By \cref{cor:certified-residual-vector-estimate},
+\[
+        \|\Rvec(u,\tau)\|
+        \le
+        \Cinner
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+Thus
+\[
+        \|\Dvec(u,\tau)\|
+        \ge
+        \frac{\gev}{\tau}
+        -
+        \Cinner
+        \frac{\log\tau}{\tau^{3/2}}.
+\]
+The right-hand side is positive whenever
+\[
+        \sqrt{\tau}
+        >
+        \frac{\Cinner}{\gev}
+        \log\tau.
+\]
+
+It remains to pass from the height inequality at \(T\) to every
+\(\tau\ge T\).  Since
+\[
+        t\mapsto \frac{\sqrt t}{\log t}
+\]
+is increasing for \(t>e^2\), the inequality
+\[
+        \sqrt T
+        >
+        \frac{\Cinner}{\gev}
+        \log T
+\]
+implies
+\[
+        \sqrt{\tau}
+        >
+        \frac{\Cinner}{\gev}
+        \log\tau
+\]
+for every
+\[
+        \tau\ge T,
+        \qquad
+        T\ge e^2.
+\]
+Therefore
+\[
+        \|\Dvec(u,\tau)\|>0.
+\]
+This contradicts
+\[
+        \Dvec(u,\tau)=(0,0).
+\]
+Hence no such reflected off-critical zero pair exists.
+\end{proof}
+
+\begin{remark}[Why this is genuinely an inner-strip theorem]
+The theorem does not rely on a one-point lower bound for
+\[
+        |\Beff(\sigma,\tau)|.
+\]
+Instead it uses the reflected vector lower bound
+\[
+        \|\Bvec(u,\tau)\|\ge\gev.
+\]
+This is why the theorem remains stable as \(u\to0\).  The divided odd channel
+is precisely what captures the transverse derivative information lost by the
+one-channel outer-strip bracket.
+\end{remark}
+
+% ============================================================
+% 9. Height bridge and public numerical target
+% ============================================================
+
+\section{Height bridge and public numerical target}
+\label{sec:height-bridge}
+
+The certified height condition is
+\[
+        \sqrt T
+        >
+        \frac{\Cinner}{\gev}
+        \log T.
+\]
+The public bracket-vector certificate uses the conservative value
+\[
+        \gev=0.2.
+\]
+Therefore the sufficient height condition becomes
+\[
+        \sqrt T
+        >
+        5\Cinner\log T.
+\]
+
+For the shared height
+\[
+        T=10^{30},
+\]
+this condition is equivalent to
+\[
+        \Cinner
+        <
+        0.2\frac{\sqrt{10^{30}}}{\log(10^{30})}.
+\]
+Since
+\[
+        \sqrt{10^{30}}=10^{15},
+\]
+and
+\[
+        \log(10^{30})=30\log10,
+\]
+it is enough that
+\[
+        \Cinner
+        \le
+        2.895296546022\times10^{12}.
+\]
+
+\begin{proposition}[Public height criterion for \(10^{30}\)]
+\label{prop:height-criterion-1e30}
+Assume the public bracket-vector lower bound
+\[
+        \gev=0.2.
+\]
+If the final inner certificate gives
+\[
+        \Cinner
+        \le
+        2.895296546022\times10^{12},
+\]
+then
+\[
+        T=10^{30}
+\]
+is an admissible certified inner-strip height.
+\end{proposition}
+
+\begin{proof}
+Substituting
+\[
+        T=10^{30}
+\]
+and
+\[
+        \gev=0.2
+\]
+into the height condition gives
+\[
+        10^{15}
+        >
+        \frac{\Cinner}{0.2}
+        30\log10.
+\]
+This is equivalent to
+\[
+        \Cinner
+        <
+        0.2\frac{10^{15}}{30\log10}.
+\]
+The right-hand side is
+\[
+        2.895296546022\ldots\times10^{12}.
+\]
+Thus the displayed upper bound for \(\Cinner\) implies the height inequality.
+\end{proof}
+
+\begin{corollary}[Certified inner strip at the shared height]
+\label{cor:inner-strip-shared-height}
+Assume the hypotheses of
+\cref{thm:conditional-certified-inner-strip}.  Assume further that the final
+public certificate records
+\[
+        \gev=0.2
+\]
+and
+\[
+        \Cinner
+        \le
+        2.895296546022\times10^{12}.
+\]
+Then there are no nontrivial zeros in
+\[
+        0<\left|\Re s-\frac12\right|\le0.01,
+        \qquad
+        \Im s\ge10^{30}.
+\]
+\end{corollary}
+
+\begin{proof}
+This follows immediately from
+\cref{thm:conditional-certified-inner-strip} and
+\cref{prop:height-criterion-1e30}.
+\end{proof}
+
+\begin{remark}[If the final constant is larger]
+If the final certificate gives
+\[
+        \Cinner>2.895296546022\times10^{12},
+\]
+then the inner-strip theorem is not invalid.  One simply cannot use the shared
+height \(10^{30}\) with the conservative value \(\gev=0.2\).  The certified
+height must then be recomputed from
+\[
+        \sqrt T
+        >
+        \frac{\Cinner}{0.2}
+        \log T.
+\]
+\end{remark}
+
+% ============================================================
+% 10. Public certificate interface
+% ============================================================
+
+\section{Public certificate interface}
+\label{sec:public-certificate-interface}
+
+The final inner-strip theorem is a certified theorem only when the public JSON
+certificate exists and has the required status.  The purpose of this section is
+to make the certificate contract explicit.
+
+The final public certificate is
+\[
+        \texttt{INNER\_STRIP\_CERTIFICATE\_SAFE.json}.
+\]
+It must have
+\[
+        \texttt{status = "inner\_full\_certificate"}.
+\]
+It must also record the following fields:
+\[
+        \texttt{u0},
+        \qquad
+        \texttt{g0\_bracket\_vector\_lower},
+\]
+\[
+        \texttt{C\_even\_residual\_upper},
+        \qquad
+        \texttt{C\_sigma\_residual\_upper},
+\]
+\[
+        \texttt{C\_inner\_vector\_upper},
+        \qquad
+        \texttt{height\_tested},
+\]
+and
+\[
+        \texttt{height\_condition\_holds}.
+\]
+
+The final certificate must depend on seven sector certificates:
+\[
+        {\rm band},
+        \quad
+        {\rm bd},
+        \quad
+        {\rm far},
+        \quad
+        {\rm end},
+        \quad
+        {\rm nonstat},
+        \quad
+        {\rm floor},
+        \quad
+        {\rm core}.
+\]
+Each sector certificate must have status
+\[
+        \texttt{proved}
+\]
+and must contain both
+\[
+        \texttt{C\_value\_upper\_safe}
+\]
+and
+\[
+        \texttt{C\_sigma\_derivative\_upper\_safe}.
+\]
+
+\begin{definition}[Acceptable inner certificate]
+\label{def:acceptable-inner-certificate}
+An inner-strip certificate is acceptable if and only if:
+
+\begin{enumerate}[label=(\roman*)]
+    \item the final file
+    \[
+            \texttt{INNER\_STRIP\_CERTIFICATE\_SAFE.json}
+    \]
+    has
+    \[
+            \texttt{status = "inner\_full\_certificate"};
+    \]
+
+    \item the bracket-vector lower field satisfies
+    \[
+            \texttt{g0\_bracket\_vector\_lower}\ge0.2;
+    \]
+
+    \item every sector dependency has status
+    \[
+            \texttt{proved};
+    \]
+
+    \item every sector dependency contains both an ordinary residual constant
+    and a \(\sigma\)-derivative residual constant;
+
+    \item the final file records
+    \[
+            \texttt{height\_condition\_holds = true}.
+    \]
+\end{enumerate}
+\end{definition}
+
+\begin{remark}[No theorem without the final status]
+A collection of partial certificates does not certify the inner-strip theorem.
+The theorem is certified only after the strict merger produces the final status
+\[
+        \texttt{inner\_full\_certificate}.
+\]
+This prevents accidental use of a certificate missing one of the derivative
+sectors.
+\end{remark}
+
+\subsection{Reproduction commands}
+
+The expected public workflow is the following.  First create the inner
+certificate directory:
+\begin{verbatim}
+mkdir -p certs_inner
+\end{verbatim}
+
+Run the bracket-vector verifier:
+\begin{verbatim}
+python scripts/cert_inner_bracket_vector.py \
+  > certs_inner/inner_bracket_vector.raw.json
+\end{verbatim}
+
+Then run the seven derivative-aware sector verifiers.  Their final safe outputs
+must have the following form:
+\begin{verbatim}
+certs_inner/band_sector.safe.json
+certs_inner/bd_sector.safe.json
+certs_inner/far_sector.safe.json
+certs_inner/end_sector.safe.json
+certs_inner/nonstat_sector.safe.json
+certs_inner/floor_sector.safe.json
+certs_inner/core_sector.safe.json
+\end{verbatim}
+
+Finally run the strict merger:
+\begin{verbatim}
+python scripts/merge_inner_certificate_safe.py \
+  --inputs 'certs_inner/*_sector.safe.json' \
+  --height 1e30 \
+  --g0 0.2 \
+  --output INNER_STRIP_CERTIFICATE_SAFE.json
+\end{verbatim}
+
+The theorem at height \(10^{30}\) is certified only if the final output has
+\[
+        \texttt{status = "inner\_full\_certificate"}.
+\]
+
+% ============================================================
+% 11. Combined consequence with the outer-strip theorem
+% ============================================================
+
+
+\section{Combined consequence with the certified outer strip}
+\label{sec:combined-consequence}
+
+The certified outer-strip theorem gives the zero-free region
+\[
+        0.01\le\Re s\le0.49,
+        \qquad
+        \Im s\ge10^{30},
+\]
+and, by reflection,
+\[
+        0.51\le\Re s\le0.99,
+        \qquad
+        \Im s\ge10^{30}.
+\]
+The inner-strip theorem certified in this paper covers
+\[
+        0<\left|\Re s-\frac12\right|\le0.01,
+        \qquad
+        \Im s\ge10^{30},
+\]
+provided the final inner certificate satisfies the public height criterion.
+
+Thus, after both the outer-strip and inner-strip certificates are complete, the
+combined certified region is
+\[
+        0.01\le\Re s\le0.99,
+        \qquad
+        \Re s\ne\frac12,
+        \qquad
+        \Im s\ge10^{30}.
+\]
+
+\begin{corollary}[Combined certified off-critical exclusion above the shared height]
+\label{cor:combined-off-critical-exclusion}
+Assume the certified outer-strip theorem and assume the acceptable inner
+certificate of \cref{def:acceptable-inner-certificate} verifies the height
+\[
+        T=10^{30}.
+\]
+Then the Riemann zeta function has no nontrivial zeros with
+\[
+        0.01\le\Re s\le0.99,
+        \qquad
+        \Re s\ne\frac12,
+        \qquad
+        \Im s\ge10^{30}.
+\]
+\end{corollary}
+
+\begin{proof}
+The outer-strip theorem covers
+\[
+        0.01\le\Re s\le0.49
+\]
+and its reflected strip
+\[
+        0.51\le\Re s\le0.99.
+\]
+The inner-strip theorem covers
+\[
+        0<\left|\Re s-\frac12\right|\le0.01,
+\]
+which is precisely
+\[
+        0.49\le\Re s<\frac12
+        \quad\text{and}\quad
+        \frac12<\Re s\le0.51.
+\]
+Together these regions cover
+\[
+        0.01\le\Re s\le0.99,
+        \qquad
+        \Re s\ne\frac12.
+\]
+\end{proof}
+
+\begin{remark}[Extreme strips near \(0\) and \(1\)]
+The statement above does not claim a certified exclusion in
+\[
+        0<\Re s<0.01
+        \quad\text{or}\quad
+        0.99<\Re s<1.
+\]
+Those extreme strips would require either a separate certified outer-strip run
+with a smaller left endpoint, or an independent zero-free argument covering
+those regions.
+\end{remark}
+
+\begin{remark}[This is not a finite-height verification below \(10^{30}\)]
+The combined theorem is a high-height off-critical exclusion.  It does not by
+itself verify zeros below \(10^{30}\).  To turn the combined high-height
+exclusion into a full verification statement up to the critical line, one would
+also need an independent finite-height verification up to the same height.
+No such finite-height verification is claimed in this paper.
+\end{remark}
+
+\begin{remark}[No claim about zeros on the critical line]
+The theorem excludes off-critical zeros in the certified high-height region.
+It does not exclude zeros on the critical line.  The critical line is allowed
+and is not part of the contradiction.
+\end{remark}
+
+% ============================================================
+% Bibliography
+% ============================================================
+
+\begin{thebibliography}{9}
+
+\bibitem{OuterStructural}
+V\'ictor Blanco Bataller.
+\newblock \emph{A Mellin-Symmetric Quotient Obstruction and a Certified Outer-Strip Exclusion for the Riemann Zeta Function}.
+\newblock Structural outer-strip paper, 2026.
+
+\bibitem{OuterCertifier}
+V\'ictor Blanco Bataller.
+\newblock \emph{A Certified Outer-Strip Exclusion for the Zeta Quotient Obstruction}.
+\newblock Companion certification paper, 2026.
+
+\bibitem{CertRepo}
+V\'ictor Blanco Bataller.
+\newblock \emph{RH outer-strip certifier repository}.
+\newblock Public verification repository, 2026.
+\newblock \RepoURL.
+\newblock Commit: \texttt{TO-BE-INSERTED}.
+
+\bibitem{Titchmarsh}
+E. C. Titchmarsh.
+\newblock \emph{The Theory of the Riemann Zeta-Function}.
+\newblock Second edition, revised by D. R. Heath-Brown.
+\newblock Oxford University Press, 1986.
+
+\bibitem{Ivic}
+A. Ivi\'c.
+\newblock \emph{The Riemann Zeta-Function}.
+\newblock Dover Publications, 2003.
+
+\bibitem{Edwards}
+H. M. Edwards.
+\newblock \emph{Riemann's Zeta Function}.
+\newblock Dover Publications, 2001.
+
+\bibitem{JohanssonArb}
+Fredrik Johansson.
+\newblock Arb: Efficient arbitrary-precision midpoint-radius interval arithmetic.
+\newblock \emph{IEEE Transactions on Computers}, 66(8):1281--1292, 2017.
+\newblock DOI: \texttt{10.1109/TC.2017.2690633}.
+
+\bibitem{FLINT}
+The FLINT team.
+\newblock \emph{FLINT: Fast Library for Number Theory}.
+\newblock \url{https://flintlib.org}.
+
+\bibitem{PythonFlint}
+The python-flint developers.
+\newblock \emph{python-flint: Python bindings for FLINT and Arb}.
+\newblock \url{https://github.com/flintlib/python-flint}.
+
+\end{thebibliography}
+
+\end{document}

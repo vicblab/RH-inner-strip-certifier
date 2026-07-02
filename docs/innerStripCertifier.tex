@@ -1,0 +1,4291 @@
+\documentclass[11pt]{article}
+
+% ============================================================
+% Encoding and page layout
+% ============================================================
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,margin=1.12in]{geometry}
+
+% ============================================================
+% Mathematics and theorem environments
+% ============================================================
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage[nameinlink,capitalize]{cleveref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!55!black,
+    citecolor=blue!55!black,
+    urlcolor=blue!55!black
+}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{assumption}[theorem]{Assumption}
+
+% ============================================================
+% Macros
+% ============================================================
+
+% ============================================================
+% Basic macros for the inner-strip certification companion paper
+% ============================================================
+
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\eps}{\varepsilon}
+
+\newcommand{\s}{s}
+\newcommand{\sig}{\sigma}
+\newcommand{\tauh}{\tau}
+
+\newcommand{\NQ}{\mathcal N_Q}
+\newcommand{\Beff}{\mathfrak B_{\rm eff}}
+\newcommand{\Bvec}{\mathfrak B}
+\newcommand{\Rtot}{\mathcal R_{\rm total}}
+
+\newcommand{\Rband}{\mathcal R_{\rm band}}
+\newcommand{\Rbd}{\mathcal R_{\rm bd}}
+\newcommand{\Rfar}{\mathcal R_{\rm far}}
+\newcommand{\Rend}{\mathcal R_{\rm end}}
+\newcommand{\Rnonstat}{\mathcal R_{\rm nonstat}}
+\newcommand{\Rfloor}{\mathcal R_{\rm floor}}
+\newcommand{\Rcore}{\mathcal R_{\rm core}}
+
+\newcommand{\Gbd}{G_{\rm bd}^{J}}
+\newcommand{\Gfar}{G_{\rm far}^{J}}
+\newcommand{\Gend}{G_{\rm end}^{J}}
+\newcommand{\Gnonstat}{G_{\rm nonstat}^{J}}
+\newcommand{\Gcore}{G_{\rm core}}
+
+\newcommand{\PiQ}{\Pi_Q}
+\newcommand{\Czero}{C_0}
+\newcommand{\Cone}{C_1}
+\newcommand{\Cinner}{C_{\rm inner}}
+\newcommand{\gzero}{g_0}
+
+\newcommand{\JSON}[1]{\texttt{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\newcommand{\Qside}{\texttt{Q}}
+\newcommand{\Jproj}{\texttt{J\_projected}}
+\newcommand{\Zeroside}{\texttt{zero}}
+\newcommand{\Mixedside}{\texttt{mixed}}
+
+\newcommand{\CertFile}{\texttt{INNER\_STRIP\_CERTIFICATE\_SAFE.json}}
+
+\newcommand{\RepoURL}{\url{https://github.com/vicblab/RH-inner-strip-certifier}}
+
+
+
+\title{
+A Certified Inner-Strip Two-Channel Quotient Obstruction
+for the Riemann Zeta Function
+}
+
+\author{
+V\'ictor Blanco Bataller
+}
+
+\date{\today}
+\begin{document}
+\maketitle
+\begin{abstract}
+This paper gives a machine-checkable certification of the inner-strip residual
+estimates arising in the reflected two-channel quotient obstruction for the
+Riemann zeta function.  The certified strip is the fixed central strip
+\[
+        |\sigma-\tfrac12|\le 0.01,
+        \qquad s=\sigma+i\tau,
+\]
+with the critical line separated by a finite-width two-channel bracket
+certificate.  The certified expansion has the form
+\[
+        \mathcal N_Q(s)
+        =
+        \frac{i}{\tau}\mathfrak B_{\rm eff}(\sigma,\tau)
+        +
+        \mathcal R_{\rm total}(s),
+\]
+where the total residual is decomposed into seven separately certified sectors,
+\[
+        \mathcal R_{\rm total}
+        =
+        \mathcal R_{\rm band}
+        +
+        \mathcal R_{\rm bd}
+        +
+        \mathcal R_{\rm far}
+        +
+        \mathcal R_{\rm end}
+        +
+        \mathcal R_{\rm nonstat}
+        +
+        \mathcal R_{\rm floor}
+        +
+        \mathcal R_{\rm core}.
+\]
+Each sector certificate contains both a value bound and a
+\(\sigma\)-derivative bound, and the final strict merger also requires a
+finite-width bracket certificate.  The final certified constants are
+\[
+        C_0
+        =
+        255675240189.76995047822220961036088344393198723387179813950427053690494808885261,
+\]
+\[
+        C_1
+        =
+        291824585243.67624174026287399979132232317927055971912800732675440018563808683476,
+\]
+and therefore
+\[
+        C_{\rm inner}
+        =
+        \sqrt{C_0^2+C_1^2}
+        =
+        387983784453.345700134863573943992120362905925566406274034828268159
+\]
+Together with the certified bracket lower bound
+\[
+        g_0=0.2,
+\]
+the height inequality
+\[
+        \sqrt T>
+        \frac{C_{\rm inner}}{g_0}\log T
+\]
+holds at \(T=10^{30}\), and in fact already holds for every
+\(T\ge 10^{29}\).  Subject to the structural quotient identity and
+two-channel obstruction theorem proved in the analytic companion paper, this
+certifies the inner-strip exclusion of off-critical zeros in
+\[
+        0<|\Re s-\tfrac12|\le0.01
+\]
+for all
+\[
+        |\Im s|\ge10^{29}.
+\]
+
+Combined with the separately certified outer-strip theorem, this gives a
+high-height exclusion throughout the critical strip away from the endpoint
+neighborhoods of \(0\) and \(1\), at height \(|\Im s|\ge10^{30}\).
+\end{abstract}
+
+\section{Introduction}
+
+This paper is the certification companion to the reflected two-channel quotient
+obstruction for the Riemann zeta function.  The analytic part of the argument
+reduces the exclusion of off-critical zeros in a fixed central strip to a
+quantitative comparison between an explicit leading bracket vector and a
+certified residual vector.  The purpose of the present paper is to record, in a
+machine-checkable and reproducible form, the constants entering that comparison.
+
+The quotient numerator used in the obstruction is denoted by
+\[
+        \mathcal N_Q(s),
+        \qquad s=\sigma+i\tau.
+\]
+At a nontrivial zero of \(\zeta(s)\), the structural analytic setup gives
+\[
+        \mathcal N_Q(s)=0.
+\]
+The reflected two-channel expansion writes this numerator as
+\[
+        \mathcal N_Q(s)
+        =
+        \frac{i}{\tau}\mathfrak B_{\rm eff}(\sigma,\tau)
+        +
+        \mathcal R_{\rm total}(s).
+\]
+The term \(\mathfrak B_{\rm eff}\) is the explicit two-channel bracket.  The
+residual term \(\mathcal R_{\rm total}\) contains all errors left after the
+stationary, boundary, endpoint, band, nonstationary, floor, and algebraic core
+pieces have been separated.  The certificate proves that this residual is
+smaller than the bracket term at the certified height.
+
+\begin{assumption}[Structural quotient interface]
+The present paper assumes the structural quotient identity and the
+two-channel obstruction interface established in the analytic companion paper.
+In particular, at a nontrivial zero of \(\zeta(s)\) the quotient numerator
+satisfies
+\[
+        \NQ(s)=0,
+\]
+and the certified expansion has the form
+\[
+        \NQ(s)
+        =
+        \frac{\ii}{\tauh}\Beff(\sig,\tauh)
+        +
+        \Rtot(s).
+\]
+The role of the present paper is to certify the bracket lower bound, the
+sector residual bounds, the normalization ledger, and the final height
+inequality for this interface.
+\end{assumption}
+
+The residual is decomposed as
+\[
+        \mathcal R_{\rm total}
+        =
+        \mathcal R_{\rm band}
+        +
+        \mathcal R_{\rm bd}
+        +
+        \mathcal R_{\rm far}
+        +
+        \mathcal R_{\rm end}
+        +
+        \mathcal R_{\rm nonstat}
+        +
+        \mathcal R_{\rm floor}
+        +
+        \mathcal R_{\rm core}.
+\]
+The seven labels correspond to:
+\[
+        {\rm band},\quad
+        {\rm bd},\quad
+        {\rm far},\quad
+        {\rm end},\quad
+        {\rm nonstat},\quad
+        {\rm floor},\quad
+        {\rm core}.
+\]
+The sector certificates are merged by a strict final verifier.  The merger
+checks that all seven sector certificates are present, that the normalization
+side of each sector is declared, that every sector contains both a value
+constant and a \(\sigma\)-derivative constant, and that a finite-width bracket
+certificate is present.  The final repository contains a one-command
+reproduction script,
+\[
+        \texttt{./run\_all\_certification.sh},
+\]
+which generates the seven sector certificates, the bracket certificate, and the
+final file
+\[
+        \texttt{INNER\_STRIP\_CERTIFICATE\_SAFE.json}.
+\]
+The final repository structure and tutorial-style reproduction instructions are
+available in the public repository
+\begin{center}
+\RepoURL
+\end{center}
+The repository README records the intended strip, bracket parameters, target
+height, expected merged constants, and one-command reproduction script
+\[
+        \code{./run\_all\_certification.sh}.
+\]
+
+The certification uses two residual channels.  The first is the even residual
+channel, bounded by a constant \(C_0\).  The second is the
+\(\sigma\)-derivative channel, bounded by a constant \(C_1\).  The final
+merged certificate gives
+\[
+        C_0
+        =
+        255675240189.76995047822220961036088344393198723387179813950427053690494808885261,
+\]
+and
+\[
+        C_1
+        =
+        291824585243.67624174026287399979132232317927055971912800732675440018563808683476.
+\]
+Thus
+\[
+        C_{\rm inner}
+        =
+        \sqrt{C_0^2+C_1^2}
+        =
+        387983784453.34570013486357394399212036290592556640627403482826815918742177195616.
+\]
+The final JSON produced by the strict bracket-aware merger records this value
+as
+\[
+        \texttt{C\_inner\_vector\_upper}.
+\]
+The strict merger used for the final theorem requires both the seven residual
+sector files and the finite-width bracket certificate. 
+
+The bracket certificate supplies the lower bound
+\[
+        g_0=0.2.
+\]
+In the certificate this is recorded as
+\[
+        \texttt{g0\_bracket\_vector\_lower = 0.2}.
+\]
+The finite-width certificate is based on the critical-line lower bound
+\[
+        g_{\rm crit}
+        =
+        \frac{\sqrt2}{48}(23\log2-2)
+        =
+        0.410781461979799978\ldots,
+\]
+together with a conservative compact Lipschitz audit on
+\[
+        0\le u\le0.01.
+\]
+The audit records
+\[
+        \|\mathfrak B(u,\tau)\|
+        \ge
+        g_{\rm crit}-20u.
+\]
+At \(u=0.01\), this lower bound remains strictly above \(0.2\).  The finite
+bracket script and its certificate are included in the final reproduction
+bundle. 
+
+The certified obstruction condition is
+\[
+        \sqrt T>
+        \frac{C_{\rm inner}}{g_0}\log T.
+\]
+Substituting the certified values gives
+\[
+        C_{\rm inner}
+        =
+        387983784453.34570013486357394399212036290592556640627403482826815918742177195616,
+        \qquad
+        g_0=0.2.
+\]
+Solving
+\[
+        \sqrt T=
+        \frac{C_{\rm inner}}{g_0}\log T
+\]
+gives the numerical threshold
+\[
+        T_{\rm min}
+        \approx
+        1.5867647318922528\times10^{28}.
+\]
+Consequently, the clean power-of-ten height implied by the certificate is
+\[
+        T\ge10^{29}.
+\]
+The repository includes a height-threshold utility,
+\[
+        \code{tools/height\_threshold.py},
+\]
+which reproduces this computation.  The same repository also records the
+one-command reproduction pipeline and the expected final constants
+\[
+        C_{\rm even}\approx2.5567524018976995\times10^{11},
+        \qquad
+        C_{\sigma}\approx2.9182458524367624\times10^{11},
+\]
+\[
+        C_{\rm inner}\approx3.879837844533457\times10^{11}.
+\]
+
+We record the certified statement as follows.
+
+\begin{theorem}[Certified inner-strip residual and height bound]
+Let
+\[
+        s=\sigma+i\tau,
+        \qquad
+        \sigma\in[0.49,0.51],
+        \qquad
+        \tau\ge10.
+\]
+The certificate proves the residual decomposition
+\[
+        \mathcal R_{\rm total}
+        =
+        \mathcal R_{\rm band}
+        +
+        \mathcal R_{\rm bd}
+        +
+        \mathcal R_{\rm far}
+        +
+        \mathcal R_{\rm end}
+        +
+        \mathcal R_{\rm nonstat}
+        +
+        \mathcal R_{\rm floor}
+        +
+        \mathcal R_{\rm core},
+\]
+with bounds
+\[
+        |\mathcal R_{\rm even}(s)|
+        \le
+        C_0\frac{\log\tau}{\tau^{3/2}},
+\]
+and
+\[
+        |\partial_\sigma\mathcal R_{\rm even}(s)|
+        \le
+        C_1\frac{\log\tau}{\tau^{3/2}},
+\]
+where
+\[
+        C_0
+        =
+        255675240189.76995047822220961036088344393198723387179813950427053690494808885261,
+\]
+and
+\[
+        C_1
+        =
+        291824585243.67624174026287399979132232317927055971912800732675440018563808683476.
+\]
+Therefore
+\[
+        C_{\rm inner}
+        =
+        \sqrt{C_0^2+C_1^2}
+        =
+        387983784453.34570013486357394399212036290592556640627403482826815918742177195616.
+\]
+Together with the certified bracket lower bound
+\[
+        g_0=0.2,
+\]
+the inequality
+\[
+        \sqrt T>
+        \frac{C_{\rm inner}}{g_0}\log T
+\]
+holds for \(T=10^{30}\), and more sharply for every \(T\ge10^{29}\).
+\end{theorem}
+
+\begin{corollary}[Certified central inner-strip exclusion]
+Assume the structural quotient identity and two-channel obstruction theorem
+proved in the analytic companion paper.  Then there are no off-critical
+nontrivial zeros of \(\zeta(s)\) in the central inner strip
+\[
+        0<|\Re s-\tfrac12|\le0.01
+\]
+for
+\[
+        |\Im s|\ge10^{29}.
+\]
+In particular, the certified exclusion holds at the shared target height
+\[
+        |\Im s|\ge10^{30}.
+\]
+\end{corollary}
+
+The remainder of the paper explains how the certificate is assembled.  The next
+section describes the JSON schema, the sector normalization ledger, and the
+distinction between \(Q\)-side, \(J\)-side projected, mixed, and zero sectors.
+Subsequent sections document the bracket certificate, the boundary sector, the
+band and endpoint sectors, the far and global nonstationary sectors, and the
+final merge.
+
+
+% ============================================================
+% Step 2: Certificate schema and normalization ledger
+% ============================================================
+
+\section{Certificate schema and normalization ledger}
+
+The purpose of the certificate is not only to give numerical constants, but to
+record a reproducible and auditable decomposition of the residual term
+\[
+        \Rtot
+        =
+        \Rband
+        +
+        \Rbd
+        +
+        \Rfar
+        +
+        \Rend
+        +
+        \Rnonstat
+        +
+        \Rfloor
+        +
+        \Rcore .
+\]
+For this reason the final certifier does not accept a single undifferentiated
+constant.  Instead, it requires seven separate sector certificates and one
+finite-width bracket certificate.  Each sector certificate records the sector
+name, its normalization side, its value-channel constant, its
+\(\sig\)-derivative-channel constant, a coverage hash, a normalization hash,
+and a proof hash.  The strict final merger checks that all required sectors are
+present and that the bracket certificate is present before producing the final
+file
+\[
+        \CertFile .
+\]
+
+The final certificate is generated by the bracket-aware merger
+\[
+        \code{merge\_inner\_certificate\_with\_bracket\_safe.py}.
+\]
+This merger requires the seven residual-sector certificates
+\[
+        \code{band\_sector.safe.json},\quad
+        \code{bd\_sector.safe.json},\quad
+        \code{far\_sector.safe.json},\quad
+        \code{end\_sector.safe.json},
+\]
+\[
+        \code{nonstat\_sector.safe.json},\quad
+        \code{floor\_sector.safe.json},\quad
+        \code{core\_sector.safe.json},
+\]
+and the finite-width bracket certificate
+\[
+        \code{inner\_bracket\_vector.safe.json}.
+\]
+The merger refuses to produce a final theorem-level certificate if any of these
+files is missing, if any residual sector does not have status
+\[
+        \JSON{proved},
+\]
+or if the bracket certificate does not have status
+\[
+        \JSON{proved}.
+\]
+This prevents the final theorem from being certified using only the limiting
+critical-line bracket bound.
+
+Each residual-sector certificate has the following logical schema:
+\[
+\begin{aligned}
+        &\JSON{status},\\
+        &\JSON{sector},\\
+        &\JSON{side},\\
+        &\JSON{C\_value\_upper\_safe},\\
+        &\JSON{C\_sigma\_derivative\_upper\_safe},\\
+        &\JSON{coverage\_hash},\\
+        &\JSON{normalization\_hash},\\
+        &\JSON{proof\_hash}.
+\end{aligned}
+\]
+The field
+\[
+        \JSON{status}
+\]
+must equal
+\[
+        \JSON{proved}.
+\]
+The field
+\[
+        \JSON{sector}
+\]
+must be one of
+\[
+        \JSON{band},\quad
+        \JSON{bd},\quad
+        \JSON{far},\quad
+        \JSON{end},\quad
+        \JSON{nonstat},\quad
+        \JSON{floor},\quad
+        \JSON{core}.
+\]
+The field
+\[
+        \JSON{side}
+\]
+declares how the sector is normalized.  The allowed values are
+\[
+        \Qside,\qquad
+        \Jproj,\qquad
+        \Zeroside,\qquad
+        \Mixedside .
+\]
+
+The meaning of these four normalization types is as follows.  A sector marked
+\[
+        \Qside
+\]
+already lives in quotient-numerator normalization.  Such a sector must not be
+multiplied by the quotient projection again.  This is the case for the band
+sector:
+\[
+        \Rband
+        =
+        C_B S_2^{\rm band}
+        +
+        \frac{\s-1}{\s}C_A S_1^{\rm band}
+        -
+        \frac{\ii}{2\tauh}
+        \left(
+            2^{-\sig}e^{-\ii L}
+            -
+            2^{\sig-1}e^{\ii L}
+        \right).
+\]
+The band term is therefore declared as
+\[
+        \JSON{side = Q}.
+\]
+
+A sector marked
+\[
+        \Jproj
+\]
+is first naturally bounded on the \(J\)-side and is then projected into the
+quotient numerator by
+\[
+        \PiQ(\s)
+        =
+        \frac{\ii\tauh}{(1-\s)(\s+1)}.
+\]
+For such a sector, if the \(J\)-side residual is \(G_\nu^{J}(\s)\), the
+quotient-side residual is
+\[
+        \mathcal R_\nu(\s)
+        =
+        \PiQ(\s)G_\nu^{J}(\s).
+\]
+The derivative certificate must include the derivative of the projection:
+\[
+        \partial_\sig \mathcal R_\nu(\s)
+        =
+        \left(\partial_\sig \PiQ(\s)\right)G_\nu^{J}(\s)
+        +
+        \PiQ(\s)\partial_\sig G_\nu^{J}(\s),
+\]
+where
+\[
+        \partial_\sig\PiQ(\s)
+        =
+        \PiQ(\s)
+        \left(
+            \frac{1}{1-\s}
+            -
+            \frac{1}{\s+1}
+        \right).
+\]
+The boundary, far, endpoint, and global nonstationary sectors are all declared
+as
+\[
+        \JSON{side = J\_projected}.
+\]
+
+The floor sector is declared as
+\[
+        \JSON{side = zero}.
+\]
+It is identically zero under the half-open floor convention:
+\[
+        \Rfloor(\s)=0,
+        \qquad
+        \partial_\sig\Rfloor(\s)=0.
+\]
+Accordingly, its safe value and derivative constants are both zero.
+
+The core sector is declared as
+\[
+        \JSON{side = mixed}.
+\]
+Its primary explicit contribution is the quotient-side coefficient mismatch
+\[
+        \Delta_\rho(\s,\tauh)
+        =
+        -\ii
+        \left(\frac{2\pi}{\tauh}\right)^{1-2\sig}
+        e^{2\ii\Theta(\tauh)}
+        \frac{\s^2-\s+1}{\s(1-\s)(\s+1)}.
+\]
+The corresponding core component is
+\[
+        G_{\rho}^{\rm core}(\s)
+        =
+        C_B(\s,\tauh)\Delta_\rho(\s,\tauh)
+        \sum_{m\le N(\tauh)} m^{-\s}.
+\]
+This term is already quotient-side and is not projected again.  If later
+algebraic subcomponents are split off on the \(J\)-side, they must be declared
+inside the core certificate and projected separately.  The certificate therefore
+marks the whole core sector as mixed and records the projection convention in
+the normalization hash.
+
+Every raw sector constant is converted into a safety-normalized constant before
+it is accepted by the final merger.  The safety rule is
+\[
+        C_{\rm safe}
+        =
+        \begin{cases}
+        0, & C_{\rm raw}=0,\\
+        C_{\rm raw}(1+10^{-12})+100, & C_{\rm raw}>0.
+        \end{cases}
+\]
+The fields
+\[
+        \JSON{C\_value\_upper\_safe}
+        \quad\text{and}\quad
+        \JSON{C\_sigma\_derivative\_upper\_safe}
+\]
+are the only constants summed by the final merger.  This rule gives a uniform
+rounding and transcription margin and prevents marginal certificates from
+depending on exact decimal formatting.
+
+The two hashes
+\[
+        \JSON{coverage\_hash}
+        \quad\text{and}\quad
+        \JSON{normalization\_hash}
+\]
+serve different purposes.  The coverage hash records what region or subregion
+the sector certifies.  For example, the boundary sector coverage hash depends
+on the compact-boundary hook, the midrange compact bridge, the high-\(\tauh\)
+Taylor hook, the compact-complement tail hook, the compact-complement
+nonstationary hook, and the stationary-overlap hook.  The normalization hash
+records whether the sector is \(Q\)-side, \(J\)-side projected, zero, or mixed,
+and therefore records whether \(\PiQ\) and \(\partial_\sig\PiQ\) are included.
+Finally, the proof hash is a hash of the complete JSON object.  The final merge
+records the proof hash of every sector and the proof hash of the bracket
+certificate.
+
+The boundary sector has its own internal ledger because it is assembled from
+several hooks.  In the final run it is the sum of:
+\[
+        \text{finite compact boundary},
+\]
+\[
+        \text{midrange compact boundary bridge},
+\]
+\[
+        \text{high-\(\tauh\) compact Taylor boundary},
+\]
+\[
+        \text{compact-complement tail},
+\]
+\[
+        \text{compact-complement nonstationary transition},
+\]
+and
+\[
+        \text{compact-complement stationary overlap}.
+\]
+The boundary merger sums the safety-normalized constants from these hooks and
+produces the final file
+\[
+        \code{bd\_sector.safe.json}.
+\]
+Both the value channel and the \(\sig\)-derivative channel are summed.  The
+stationary and nonstationary transition hooks use complementary box counts:
+boxes for which the phase derivative is separated from zero are assigned to the
+nonstationary hook, and boxes for which the derivative interval intersects the
+stationary threshold are assigned to the stationary-overlap hook.  This prevents
+the transition region from being silently omitted.
+
+The final strict merger then forms
+\[
+        \Czero
+        =
+        \sum_\nu C_{\nu,0}^{\rm safe},
+        \qquad
+        \Cone
+        =
+        \sum_\nu C_{\nu,1}^{\rm safe},
+\]
+where \(\nu\) runs over
+\[
+        {\rm band},\,
+        {\rm bd},\,
+        {\rm far},\,
+        {\rm end},\,
+        {\rm nonstat},\,
+        {\rm floor},\,
+        {\rm core}.
+\]
+It then computes
+\[
+        \Cinner
+        =
+        \sqrt{\Czero^2+\Cone^2}.
+\]
+For the final certificate produced in this run, the merged values are
+\[
+        \Czero
+        =
+        255675240189.76995047822220961036088344393198723387179813950427053690494808885261,
+\]
+\[
+        \Cone
+        =
+        291824585243.67624174026287399979132232317927055971912800732675440018563808683476,
+\]
+and
+\[
+        \Cinner
+        =
+        387983784453.34570013486357394399212036290592556640627403482826815918742177195616.
+\]
+The merger then checks the height inequality
+\[
+        \sqrt T>
+        \frac{\Cinner}{\gzero}\log T.
+\]
+The final theorem-level certificate is issued only if this inequality holds and
+only if the bracket certificate proves
+\[
+        \gzero\ge0.2.
+\]
+
+Thus the certificate schema is deliberately redundant.  It records the sector
+constant, the derivative constant, the sector side, the coverage declaration,
+the normalization declaration, and the proof hash.  The resulting final JSON is
+not merely a numerical value of \(\Cinner\); it is a reproducible dependency
+ledger for the inner-strip obstruction.
+
+
+% ============================================================
+% Step 3: Finite-width bracket certificate
+% ============================================================
+
+\section{The finite-width bracket certificate}
+
+The residual estimates certified in the previous section are useful only after
+they are compared against a strictly positive leading bracket.  The analytic
+obstruction separates the quotient numerator into the form
+\[
+        \NQ(s)
+        =
+        \frac{\ii}{\tauh}\Beff(\sig,\tauh)
+        +
+        \Rtot(s).
+\]
+At a zero of \(\zeta(s)\), one has \(\NQ(s)=0\).  Thus a contradiction follows
+once the effective bracket is bounded below and the residual vector is bounded
+above.  The present section records the finite-width lower bound used by the
+strict final merger.
+
+We write
+\[
+        \sig=\frac12+u,
+        \qquad
+        0\le u\le u_0,
+        \qquad
+        u_0=0.01.
+\]
+The phase
+\[
+        L=\tauh\log 2
+\]
+is treated modulo \(2\pi\), and the endpoint scalar
+\[
+        X=\Xi_{\rm end}(\tauh)
+\]
+is treated as a real parameter.  In the certificate the bracket is therefore
+considered as a finite-dimensional real problem in
+\[
+        (u,L,X)\in[0,0.01]\times(\mathbb R/2\pi\mathbb Z)\times\mathbb R.
+\]
+The effective bracket appearing in the quotient expansion is
+\[
+\begin{aligned}
+        \Beff(\sig,\tauh)
+        =
+        &\,
+        2^\sig e^{\ii L}
+        \left(
+            \frac{12-\sig}{48}
+            +
+            \frac{\ii}{4}X
+        \right)
+        \\
+        &-
+        2^{-\sig}e^{-\ii L}
+        \left(
+            \frac{11+\sig}{24}
+            -
+            \frac{\ii}{2}X
+        \right).
+\end{aligned}
+\]
+After substituting \(\sig=\tfrac12+u\), this becomes
+\[
+\begin{aligned}
+        \Beff(u,L,X)
+        =
+        &\,
+        2^{1/2+u} e^{\ii L}
+        \left(
+            \frac{23/2-u}{48}
+            +
+            \frac{\ii}{4}X
+        \right)
+        \\
+        &-
+        2^{-1/2-u} e^{-\ii L}
+        \left(
+            \frac{23/2+u}{24}
+            -
+            \frac{\ii}{2}X
+        \right).
+\end{aligned}
+\]
+The two-channel obstruction uses the bracket vector obtained from the even
+channel and the \(\sig\)-derivative channel.  We denote this real vector by
+\[
+        \Bvec(u,L,X).
+\]
+The quantity to be certified is the minimized bracket size
+\[
+        G(u)
+        :=
+        \inf_{L\in\mathbb R/2\pi\mathbb Z}
+        \inf_{X\in\mathbb R}
+        \|\Bvec(u,L,X)\|.
+\]
+The finite-width bracket certificate proves
+\[
+        G(u)\ge 0.2
+\]
+uniformly for
+\[
+        0\le u\le0.01.
+\]
+
+The minimization in \(X\) is not handled by sampling an unbounded real line.
+For fixed \(u\) and \(L\), the squared bracket norm is a quadratic polynomial
+in \(X\):
+\[
+        \|\Bvec(u,L,X)\|^2
+        =
+        A(u,L)X^2+B(u,L)X+C(u,L),
+\]
+with
+\[
+        A(u,L)>0.
+\]
+Thus the \(X\)-minimum is explicit:
+\[
+        X_*(u,L)
+        =
+        -\frac{B(u,L)}{2A(u,L)}.
+\]
+Substituting \(X_*(u,L)\) gives the reduced squared bracket
+\[
+        \Phi(u,L)
+        :=
+        C(u,L)
+        -
+        \frac{B(u,L)^2}{4A(u,L)}.
+\]
+Consequently
+\[
+        G(u)^2
+        =
+        \inf_{L\in\mathbb R/2\pi\mathbb Z}
+        \Phi(u,L).
+\]
+This reduction is important: the actual finite-width certificate is a compact
+interval problem in the two variables
+\[
+        u\in[0,0.01],
+        \qquad
+        L\in[0,2\pi].
+\]
+The real parameter \(X\) has already been minimized analytically.
+
+On the critical line \(u=0\), the reduced bracket admits the explicit lower
+bound
+\[
+        G(0)
+        \ge
+        g_{\rm crit},
+\]
+where
+\[
+        g_{\rm crit}
+        =
+        \frac{\sqrt2}{48}(23\log2-2).
+\]
+Numerically,
+\[
+        g_{\rm crit}
+        =
+        0.410781461979799978\ldots .
+\]
+This is well above the final target
+\[
+        g_0=0.2.
+\]
+However, the final theorem is not a statement only on the critical line.  It
+requires a finite-width lower bound on the whole interval
+\[
+        0\le u\le0.01.
+\]
+For this reason the certificate also records a compact Lipschitz audit for the
+reduced bracket.
+
+The finite-width audit proves the conservative bound
+\[
+        |G(u)-G(0)|
+        \le
+        20u
+\]
+on
+\[
+        0\le u\le0.01.
+\]
+Equivalently,
+\[
+        G(u)
+        \ge
+        G(0)-20u.
+\]
+Combining this with the critical-line lower bound gives
+\[
+        G(u)
+        \ge
+        g_{\rm crit}-20u.
+\]
+At the endpoint \(u=0.01\), this yields
+\[
+        G(u)
+        \ge
+        0.410781461979799978\ldots - 0.2
+        =
+        0.210781461979799978\ldots .
+\]
+In particular,
+\[
+        G(u)>0.2
+\]
+throughout
+\[
+        0\le u\le0.01.
+\]
+The certificate records the public lower bound as
+\[
+        g_0=0.2.
+\]
+
+The Lipschitz constant \(20\) is deliberately conservative.  The relevant
+derivatives are elementary combinations of the functions
+\[
+        2^{1/2+u},
+        \qquad
+        2^{-1/2-u},
+\]
+the linear coefficients
+\[
+        \frac{23/2-u}{48},
+        \qquad
+        \frac{23/2+u}{24},
+\]
+and the reduced quadratic expression
+\[
+        \Phi(u,L)
+        =
+        C(u,L)-\frac{B(u,L)^2}{4A(u,L)}.
+\]
+The audit is performed after the analytic minimization over \(X\).  Hence the
+only compact domain to be checked is
+\[
+        [0,0.01]\times[0,2\pi].
+\]
+The finite-width bracket certificate records this as a compact Lipschitz audit.
+After the analytic minimization in \(X\), the remaining domain is compact:
+\[
+        (u,L)\in[0,0.01]\times[0,2\pi].
+\]
+The certificate bounds the \(u\)-variation of the reduced minimized bracket by
+the conservative constant
+\[
+        K_{\rm br}=20.
+\]
+Equivalently,
+\[
+        G(u)\ge G(0)-K_{\rm br}u.
+\]
+Since
+\[
+        G(0)\ge
+        \frac{\sqrt2}{48}(23\log2-2)
+        =
+        0.410781461979799978\ldots,
+\]
+one obtains at \(u=0.01\)
+\[
+        G(u)\ge
+        0.410781461979799978\ldots-0.2
+        =
+        0.210781461979799978\ldots
+        >
+        0.2.
+\]
+Thus the public bound
+\[
+        g_0=0.2
+\]
+has a positive numerical margin.
+
+The bracket certificate is emitted as the file
+\[
+        \code{certs\_inner/inner\_bracket\_vector.safe.json}.
+\]
+Its essential fields are
+\[
+        \JSON{status = proved},
+\]
+\[
+        \JSON{sector = inner\_bracket\_vector},
+\]
+\[
+        \JSON{u0 = 0.01},
+\]
+and
+\[
+        \JSON{g0\_bracket\_vector\_lower = 0.2}.
+\]
+The certificate also records the critical-line lower bound, the Lipschitz
+constant, the computed endpoint lower bound, and a proof hash.  In the final
+run the bracket dependency was recorded by the strict merger as
+\[
+        \JSON{bracket\_certificate}.
+\]
+The strict merger refuses to produce a theorem-level certificate unless this
+file is present and has status
+\[
+        \JSON{proved}.
+\]
+Thus the final JSON cannot be produced from the residual certificates alone.
+It requires both the residual-sector ledger and the finite-width bracket
+certificate.  The bracket script and the strict bracket-aware final merger are
+part of the final certifier repository. 
+
+\begin{lemma}[Bracket margin]
+The finite-width bracket certificate has numerical margin
+\[
+        g_{\rm crit}-20(0.01)-0.2
+        =
+        0.010781461979799978\ldots
+        >
+        0.
+\]
+Consequently the certified lower bound \(g_0=0.2\) is not a marginal equality.
+\end{lemma}
+
+\begin{proof}
+The certificate records
+\[
+        g_{\rm crit}
+        =
+        \frac{\sqrt2}{48}(23\log2-2)
+        =
+        0.410781461979799978\ldots.
+\]
+The compact Lipschitz audit gives loss at most
+\[
+        20u\le20(0.01)=0.2.
+\]
+Therefore
+\[
+        G(u)\ge0.410781461979799978\ldots-0.2
+        =
+        0.210781461979799978\ldots,
+\]
+which exceeds \(0.2\) by approximately \(1.0781\times10^{-2}\).
+\end{proof}
+
+We summarize the finite-width certificate as follows.
+
+\begin{theorem}[Finite-width bracket certificate]
+Let
+\[
+        0\le u\le0.01.
+\]
+Let
+\[
+        G(u)
+        =
+        \inf_{L\in\mathbb R/2\pi\mathbb Z}
+        \inf_{X\in\mathbb R}
+        \|\Bvec(u,L,X)\|
+\]
+be the minimized two-channel bracket norm.  The certificate proves
+\[
+        G(u)\ge0.2
+\]
+uniformly on the interval
+\[
+        0\le u\le0.01.
+\]
+More precisely,
+\[
+        G(0)
+        \ge
+        \frac{\sqrt2}{48}(23\log2-2),
+\]
+and the finite-width audit proves
+\[
+        |G(u)-G(0)|\le20u.
+\]
+Therefore
+\[
+        G(u)
+        \ge
+        \frac{\sqrt2}{48}(23\log2-2)-20u
+        >
+        0.2
+\]
+for all
+\[
+        0\le u\le0.01.
+\]
+\end{theorem}
+
+\begin{proof}
+For fixed \(u\) and \(L\), the squared two-channel bracket norm is a positive
+quadratic polynomial in the endpoint parameter \(X\).  Therefore \(X\) is
+minimized exactly by
+\[
+        X_*(u,L)
+        =
+        -\frac{B(u,L)}{2A(u,L)}.
+\]
+Substitution gives the reduced compact problem
+\[
+        G(u)^2
+        =
+        \inf_{L\in[0,2\pi]}
+        \left(
+            C(u,L)
+            -
+            \frac{B(u,L)^2}{4A(u,L)}
+        \right).
+\]
+On \(u=0\), the reduced expression gives the explicit critical-line lower
+bound
+\[
+        G(0)
+        \ge
+        \frac{\sqrt2}{48}(23\log2-2).
+\]
+The interval audit then bounds the variation of the minimized bracket on
+\[
+        [0,0.01]\times[0,2\pi]
+\]
+by
+\[
+        |G(u)-G(0)|\le20u.
+\]
+Hence
+\[
+        G(u)
+        \ge
+        \frac{\sqrt2}{48}(23\log2-2)-20u.
+\]
+At \(u=0.01\), the right-hand side is still larger than \(0.2\).  This proves
+the claimed finite-width lower bound.
+\end{proof}
+
+% ============================================================
+% Step 4: Boundary sector certificate
+% ============================================================
+
+\section{The boundary sector certificate}
+
+The boundary sector is the largest certified sector in the inner-strip
+certificate.  It accounts for the stationary transition occurring near the
+endpoint
+\[
+        x=2
+\]
+in the two stationary four-family tails.  In the structural decomposition this
+sector is denoted by
+\[
+        \Rbd .
+\]
+Unlike the band sector, which is already naturally in quotient normalization,
+the boundary sector is first controlled on the \(J\)-side and is then projected
+into quotient normalization.  Thus the boundary certificate is declared with
+\[
+        \JSON{side = J\_projected}.
+\]
+If the \(J\)-side boundary residual is denoted by
+\[
+        \Gbd(\s),
+\]
+then the quotient-side residual is
+\[
+        \Rbd(\s)
+        =
+        \PiQ(\s)\Gbd(\s),
+\]
+where
+\[
+        \PiQ(\s)
+        =
+        \frac{\ii\tauh}{(1-\s)(\s+1)}.
+\]
+The derivative certificate therefore includes
+\[
+        \partial_\sig \Rbd(\s)
+        =
+        \left(\partial_\sig\PiQ(\s)\right)\Gbd(\s)
+        +
+        \PiQ(\s)\partial_\sig \Gbd(\s),
+\]
+with
+\[
+        \partial_\sig\PiQ(\s)
+        =
+        \PiQ(\s)
+        \left(
+            \frac{1}{1-\s}
+            -
+            \frac{1}{\s+1}
+        \right).
+\]
+This projection derivative is included in the boundary hook constants.
+
+The boundary analysis uses the scaled endpoint variables
+\[
+        w=\tauh^{-1/2},
+        \qquad
+        \alpha=\frac{\tauh}{4\pi},
+        \qquad
+        r_m=w(m-\alpha),
+\]
+and
+\[
+        x=2+wy.
+\]
+The endpoint layer is therefore studied in the compactified \(y\)-coordinate.
+The standard compact cutoff is
+\[
+        \chi_Y(y),
+        \qquad
+        Y=128,
+\]
+where
+\[
+        \chi_Y(y)=1
+        \quad
+        (0\le y\le Y),
+\]
+\[
+        \chi_Y(y)=1-3t^2+2t^3,
+        \qquad
+        t=\frac{y-Y}{Y},
+        \quad
+        (Y\le y\le 2Y),
+\]
+and
+\[
+        \chi_Y(y)=0
+        \quad
+        (y\ge2Y).
+\]
+The compact boundary integrals are therefore supported on
+\[
+        0\le y\le2Y.
+\]
+
+The two boundary phases are
+\[
+        \Phi_-(r,y,w)
+        =
+        2\pi r y
+        +
+        \frac{y}{2w}
+        -
+        \frac{1}{w^2}
+        \log\left(1+\frac{wy}{2}\right),
+\]
+and
+\[
+        \Phi_+(r,y,w)
+        =
+        -\Phi_-(r,y,w).
+\]
+At \(w=0\), these have the limiting forms
+\[
+        \Phi_-(r,y,0)
+        =
+        2\pi r y+\frac{y^2}{8},
+\]
+and
+\[
+        \Phi_+(r,y,0)
+        =
+        -2\pi r y-\frac{y^2}{8}.
+\]
+The amplitudes are
+\[
+        A_-(\sig,y,w)
+        =
+        (2+wy)^{-\sig-2},
+\]
+and
+\[
+        A_+(\sig,y,w)
+        =
+        (2+wy)^{\sig-3}.
+\]
+The compact finite-\(w\) difference integrals are
+\[
+\begin{aligned}
+        D_-^\chi(\sig,r,w)
+        =
+        \int_0^{2Y}
+        \chi_Y(y)
+        \bigg[
+            &(2+wy)^{-\sig-2}
+            e^{\ii\Phi_-(r,y,w)}
+            \\
+            &-
+            2^{-\sig-2}
+            e^{\ii\Phi_-(r,y,0)}
+        \bigg]
+        \,\dd y,
+\end{aligned}
+\]
+and
+\[
+\begin{aligned}
+        D_+^\chi(\sig,r,w)
+        =
+        \int_0^{2Y}
+        \chi_Y(y)
+        \bigg[
+            &(2+wy)^{\sig-3}
+            e^{\ii\Phi_+(r,y,w)}
+            \\
+            &-
+            2^{\sig-3}
+            e^{\ii\Phi_+(r,y,0)}
+        \bigg]
+        \,\dd y.
+\end{aligned}
+\]
+The \(\sig\)-derivatives are obtained by differentiating only the amplitudes,
+because the phases are independent of \(\sig\).  Therefore
+\[
+\begin{aligned}
+        \partial_\sig D_-^\chi(\sig,r,w)
+        =
+        \int_0^{2Y}
+        \chi_Y(y)
+        \bigg[
+            &-\log(2+wy)(2+wy)^{-\sig-2}
+            e^{\ii\Phi_-(r,y,w)}
+            \\
+            &+
+            \log2\,2^{-\sig-2}
+            e^{\ii\Phi_-(r,y,0)}
+        \bigg]
+        \,\dd y,
+\end{aligned}
+\]
+and
+\[
+\begin{aligned}
+        \partial_\sig D_+^\chi(\sig,r,w)
+        =
+        \int_0^{2Y}
+        \chi_Y(y)
+        \bigg[
+            &\log(2+wy)(2+wy)^{\sig-3}
+            e^{\ii\Phi_+(r,y,w)}
+            \\
+            &-
+            \log2\,2^{\sig-3}
+            e^{\ii\Phi_+(r,y,0)}
+        \bigg]
+        \,\dd y.
+\end{aligned}
+\]
+
+For one boundary mode \(m\), the \(J\)-side compact contribution is grouped as
+\[
+        G_m^\chi(\s)
+        =
+        \frac{w}{4\pi^2m^2}
+        \left[
+            c_+(\s)D_+^\chi(\sig,r_m,w)
+            +
+            c_-(\s)D_-^\chi(\sig,r_m,w)
+        \right],
+\]
+where
+\[
+        c_+(\s)=\s(\s-2),
+        \qquad
+        c_-(\s)=(1-\s)(\s+1).
+\]
+The derivative is
+\[
+\begin{aligned}
+        \partial_\sig G_m^\chi(\s)
+        =
+        \frac{w}{4\pi^2m^2}
+        \big[
+            &c_+'(\s)D_+^\chi
+            +
+            c_+(\s)\partial_\sig D_+^\chi
+            \\
+            &+
+            c_-'(\s)D_-^\chi
+            +
+            c_-(\s)\partial_\sig D_-^\chi
+        \big],
+\end{aligned}
+\]
+with
+\[
+        c_+'(\s)=2\s-2,
+        \qquad
+        c_-'(\s)=-2\s.
+\]
+
+The boundary certifier divides the boundary sector into six hooks:
+\[
+        \text{finite compact boundary},
+\]
+\[
+        \text{midrange compact boundary bridge},
+\]
+\[
+        \text{high-\(\tauh\) compact Taylor boundary},
+\]
+\[
+        \text{compact-complement tail},
+\]
+\[
+        \text{compact-complement nonstationary transition},
+\]
+and
+\[
+        \text{compact-complement stationary overlap}.
+\]
+Each hook produces its own JSON certificate.  These hook certificates are then
+summed by the strict boundary merger to form
+\[
+        \code{bd\_sector.safe.json}.
+\]
+
+The finite compact-boundary hook covers the initial bounded range
+\[
+        10\le\tauh\le25.
+\]
+It evaluates the compact integrals directly by Arb interval boxes in the
+variables
+\[
+        \sig,\quad \tauh,\quad y,
+\]
+and includes both the value channel and the \(\sig\)-derivative channel.  The
+midrange bridge covers
+\[
+        25\le\tauh\le65536
+\]
+by dyadic finite-\(\tauh\) blocks.  Each block uses the same compact-boundary
+certifier, and the midrange runner sums the safety-normalized block constants.
+The high-\(\tauh\) compact Taylor hook covers
+\[
+        \tauh\ge65536,
+        \qquad
+        w\le\frac1{256}.
+\]
+It removes the apparent singularity at \(w=0\) using the identity
+\[
+        \frac{f(w)-f(0)}{w}
+        =
+        \int_0^1
+        \partial_w f(\lambda w)
+        \,\dd\lambda.
+\]
+This gives direct interval enclosures for
+\[
+        H_\pm=\frac{D_\pm^\chi}{w}
+\]
+on boxes containing \(w=0\).  The \(\sig\)-derivative channel is handled by
+differentiating the amplitudes while retaining the same Taylor-in-\(w\)
+regularization.
+
+The compact cutoff complement
+\[
+        1-\chi_Y(y)
+\]
+is not discarded.  It is certified by three hooks.  First, the large-\(|r|\)
+compact-complement tail hook factors out the linear oscillation and bounds
+\[
+        \int_Y^\infty
+        e^{\pm 2\pi\ii r y}H_\pm(\sig,y,w)
+        \,\dd y
+\]
+by two integrations by parts.  It uses derivative envelopes for
+\[
+        H_\pm',
+        \qquad
+        H_\pm'',
+\]
+and for their \(\sig\)-derivatives.  The sigma-aware envelope certificate
+records the four quantities
+\[
+        M_{1},
+        \qquad
+        M_{2},
+        \qquad
+        M_{1,\sig},
+        \qquad
+        M_{2,\sig},
+\]
+which bound
+\[
+        |H_\pm'|,
+        \quad
+        |H_\pm''|,
+        \quad
+        |\partial_\sig H_\pm'|,
+        \quad
+        |\partial_\sig H_\pm''|.
+\]
+These are then converted into a large-\(|r|\) tail constant.
+
+Second, the compact-complement transition region
+\[
+        Y\le y\le2Y
+\]
+is split according to the phase derivative threshold
+\[
+        \lambda_0=0.25.
+\]
+On boxes where
+\[
+        |\partial_y\Phi_\pm|\ge\lambda_0,
+\]
+the nonstationary hook applies integration by parts in \(y\).  The
+\(\sig\)-derivative certificate uses the same integration-by-parts operator
+with the amplitude replaced by its \(\sig\)-derivative.  Boxes where the
+interval enclosure of \(\partial_y\Phi_\pm\) intersects
+\[
+        [-\lambda_0,\lambda_0]
+\]
+are not counted in the nonstationary hook.  They are exported to the
+stationary-overlap hook.
+
+Third, the stationary-overlap hook certifies exactly the exported boxes by
+direct absolute Arb interval bounds.  Thus the transition split is exhaustive:
+the phase-separated boxes are counted by the nonstationary hook, and the boxes
+not separated from zero are counted by the stationary-overlap hook.  In the
+final run the two transition hooks recorded complementary counts:
+\[
+        485976
+\]
+phase-separated boxes and
+\[
+        11688
+\]
+stationary-overlap boxes.  This verifies that the transition grid was split
+rather than partially omitted.
+
+The final boundary sector constants in the strict merged certificate are
+\[
+        C_{{\rm bd},0}
+        =
+        185599139689.54844424576273899129572044225947553844933704222323532721371511756646,
+\]
+and
+\[
+        C_{{\rm bd},1}
+        =
+        151534184741.81053762160606677355438429846417653094438319187408516674070499261542.
+\]
+These constants are the safety-normalized sum of all six boundary hooks.  The
+boundary certificate is therefore not a single monolithic numerical estimate.
+It is a dependency ledger recording the compact finite range, the dyadic
+midrange bridge, the high-\(\tauh\) Taylor range, the large-\(|r|\) complement
+tail, the nonstationary transition boxes, and the stationary-overlap transition
+boxes.  The final boundary JSON records all hook proof hashes and is included
+as the sector
+\[
+        \JSON{bd}
+\]
+in the final theorem-level certificate.  The final repository reproduces this
+boundary sector through the boundary hook scripts and the strict boundary
+merger. 
+
+We summarize the boundary certification as follows.
+
+\begin{theorem}[Certified boundary sector]
+On the strip
+\[
+        \sig\in[0.49,0.51],
+        \qquad
+        \tauh\ge10,
+\]
+the boundary residual satisfies
+\[
+        |\Rbd(\s)|
+        \le
+        C_{{\rm bd},0}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+and
+\[
+        |\partial_\sig\Rbd(\s)|
+        \le
+        C_{{\rm bd},1}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+where
+\[
+        C_{{\rm bd},0}
+        =
+        185599139689.54844424576273899129572044225947553844933704222323532721371511756646,
+\]
+and
+\[
+        C_{{\rm bd},1}
+        =
+        151534184741.81053762160606677355438429846417653094438319187408516674070499261542.
+\]
+The certificate includes the projection
+\[
+        \Rbd=\PiQ\Gbd
+\]
+and the derivative projection term
+\[
+        \partial_\sig\Rbd
+        =
+        (\partial_\sig\PiQ)\Gbd+\PiQ\partial_\sig\Gbd.
+\]
+\end{theorem}
+
+\begin{proof}
+The boundary region is decomposed into the six hooks described above.  The
+finite compact-boundary hook covers \(10\le\tauh\le25\).  The midrange bridge
+covers \(25\le\tauh\le65536\).  The Taylor-in-\(w\) hook covers
+\(\tauh\ge65536\).  The compact-complement tail hook covers the large-\(|r|\)
+tail of \(1-\chi_Y\).  The transition region \(Y\le y\le2Y\) is partitioned
+into phase-separated boxes and stationary-overlap boxes.  The former are
+certified by integration by parts and the latter by direct absolute enclosure.
+Each hook produces both a value-channel and a \(\sig\)-derivative-channel
+constant.  The strict boundary merger sums the safety-normalized constants and
+records the hook proof hashes.  Since each boundary hook is declared
+\(J\)-side projected, the quotient projection and its \(\sig\)-derivative are
+included.  This proves the stated boundary-sector bounds.
+\end{proof}
+
+
+
+% ============================================================
+% Step 5: Band, endpoint, and core sectors
+% ============================================================
+
+\section{Band, endpoint, and core sector certificates}
+
+We now describe the three sectors whose certification is primarily algebraic or
+finite-dimensional after the structural decomposition has been made:
+\[
+        \Rband,
+        \qquad
+        \Rend,
+        \qquad
+        \Rcore.
+\]
+These sectors play different roles in the quotient expansion.  The band sector
+is a quotient-side finite stationary band.  The endpoint sector is a
+\(J\)-side projected sector arising from the first cell, endpoint extraction,
+and the regularized endpoint scalar \(\Xi_{\rm end}\).  The core sector is a
+mixed algebraic sector containing the explicit quotient coefficient mismatch.
+
+The final certificates for these three sectors are:
+\[
+        \code{band\_sector.safe.json},
+        \qquad
+        \code{end\_sector.safe.json},
+        \qquad
+        \code{core\_sector.safe.json}.
+\]
+Their normalization sides are recorded respectively as
+\[
+        \JSON{Q},
+        \qquad
+        \JSON{J\_projected},
+        \qquad
+        \JSON{mixed}.
+\]
+Thus the band sector is not multiplied by \(\PiQ\) again, the endpoint sector
+is projected by \(\PiQ\), and the core sector records its internal
+normalization subledger.
+
+\subsection{The quotient band sector}
+
+Let
+\[
+        L_0=\frac{\tauh}{2\pi},
+\]
+and define the two band cutoffs
+\[
+        N(\tauh)
+        =
+        \left\lfloor\frac{\tauh}{4\pi}\right\rfloor,
+        \qquad
+        M(\tauh)
+        =
+        \left\lfloor\frac{\tauh}{2\pi}\right\rfloor.
+\]
+The quotient band is the finite interval
+\[
+        N(\tauh)<m\le M(\tauh).
+\]
+It is visible to the quotient stationary expansion but is not part of the
+corresponding \(J\)-tail stationary packet.  This mismatch produces one of the
+explicit terms in the effective bracket.
+
+Define the finite band sums
+\[
+        S_1^{\rm band}(\s,\tauh)
+        =
+        \sum_{N(\tauh)<m\le M(\tauh)} m^{-\s},
+\]
+and
+\[
+        S_2^{\rm band}(\s,\tauh)
+        =
+        \sum_{N(\tauh)<m\le M(\tauh)} m^{-(1-\s)}.
+\]
+The quotient stationary coefficients are
+\[
+        C_A(\s,\tauh)
+        =
+        -\ii(2\pi)^{1/2-\sig}
+        \tauh^{\sig-3/2}
+        e^{\ii\Theta(\tauh)-\ii\pi/4},
+\]
+and
+\[
+        C_B(\s,\tauh)
+        =
+        \ii(2\pi)^{\sig-1/2}
+        \tauh^{-\sig-1/2}
+        e^{-\ii\Theta(\tauh)+\ii\pi/4},
+\]
+where
+\[
+        \Theta(\tauh)
+        =
+        \tauh\log\left(\frac{\tauh}{2\pi}\right)-\tauh.
+\]
+The exact band contribution is
+\[
+        \mathcal E_{\rm band}^{\rm exact}(\s,\tauh)
+        =
+        C_B(\s,\tauh)S_2^{\rm band}(\s,\tauh)
+        +
+        \frac{\s-1}{\s}
+        C_A(\s,\tauh)S_1^{\rm band}(\s,\tauh).
+\]
+The extracted main band term is
+\[
+        \mathcal E_{\rm band}^{\rm main}(\s,\tauh)
+        =
+        \frac{\ii}{2\tauh}
+        \left(
+            2^{-\sig}e^{-\ii L}
+            -
+            2^{\sig-1}e^{\ii L}
+        \right),
+        \qquad
+        L=\tauh\log2.
+\]
+Therefore the certified band residual is
+\[
+        \Rband(\s)
+        =
+        \mathcal E_{\rm band}^{\rm exact}(\s,\tauh)
+        -
+        \mathcal E_{\rm band}^{\rm main}(\s,\tauh).
+\]
+This is already in quotient normalization.  The band certificate is therefore
+declared with
+\[
+        \JSON{side = Q}.
+\]
+No additional factor of \(\PiQ\) is applied.
+
+The \(\sig\)-derivative of the exact band term is explicit.  Since the cutoffs
+\(N(\tauh)\) and \(M(\tauh)\) depend on \(\tauh\), not on \(\sig\), we have
+\[
+        \partial_\sig S_1^{\rm band}
+        =
+        -\sum_{N<m\le M}(\log m)m^{-\s},
+\]
+and
+\[
+        \partial_\sig S_2^{\rm band}
+        =
+        \sum_{N<m\le M}(\log m)m^{-(1-\s)}.
+\]
+Also
+\[
+        \partial_\sig C_A
+        =
+        \log\left(\frac{\tauh}{2\pi}\right)C_A,
+\]
+and
+\[
+        \partial_\sig C_B
+        =
+        \log\left(\frac{2\pi}{\tauh}\right)C_B.
+\]
+Thus
+\[
+\begin{aligned}
+        \partial_\sig\mathcal E_{\rm band}^{\rm exact}
+        =
+        &\,
+        (\partial_\sig C_B)S_2^{\rm band}
+        +
+        C_B\partial_\sig S_2^{\rm band}
+        \\
+        &+
+        \frac{1}{\s^2} C_A S_1^{\rm band}
+        +
+        \frac{\s-1}{\s}
+        (\partial_\sig C_A)S_1^{\rm band}
+        +
+        \frac{\s-1}{\s}
+        C_A\partial_\sig S_1^{\rm band}.
+\end{aligned}
+\]
+The derivative of the extracted main term is
+\[
+        \partial_\sig\mathcal E_{\rm band}^{\rm main}
+        =
+        -\frac{\ii\log2}{2\tauh}
+        \left(
+            2^{-\sig}e^{-\ii L}
+            +
+            2^{\sig-1}e^{\ii L}
+        \right).
+\]
+Therefore
+\[
+        \partial_\sig\Rband
+        =
+        \partial_\sig\mathcal E_{\rm band}^{\rm exact}
+        -
+        \partial_\sig\mathcal E_{\rm band}^{\rm main}.
+\]
+
+In the certificate, the band residual is bounded by a conservative Poisson
+endpoint envelope.  The envelope accounts for the two dual stationary endpoint
+contributions, the nonstationary dual-frequency tails, the endpoint
+discretization from the floor cutoffs, and the derivative terms above.  The
+final safety-normalized constants recorded in the band certificate are
+\[
+        C_{{\rm band},0}
+        =
+        5100100.000005100000,
+\]
+and
+\[
+        C_{{\rm band},1}
+        =
+        9400100.000009400000.
+\]
+Thus
+\[
+        |\Rband(\s)|
+        \le
+        C_{{\rm band},0}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+and
+\[
+        |\partial_\sig\Rband(\s)|
+        \le
+        C_{{\rm band},1}
+        \frac{\log\tauh}{\tauh^{3/2}}.
+\]
+
+\subsection{The endpoint sector}
+
+The endpoint sector contains the first-cell contribution, the leading endpoint
+extraction, the \(\zeta(2)\)-cancellation, the regularized
+\(\Xi_{\rm end}\)-layer, and the post-integration-by-parts remainder.  It is a
+\(J\)-side sector and is therefore declared as
+\[
+        \JSON{side = J\_projected}.
+\]
+The projected endpoint residual is
+\[
+        \Rend(\s)
+        =
+        \PiQ(\s)G_{\rm end}^{J}(\s),
+\]
+where
+\[
+        G_{\rm end}^{J}
+        =
+        J_1
+        +
+        E_{\rm cancel}^{(0)}
+        +
+        \left(E_\Xi-\mathcal L_{\rm end}^{(4)}\right)
+        +
+        E_{\rm end}^{\rm rem}.
+\]
+Consequently,
+\[
+        \partial_\sig\Rend(\s)
+        =
+        \left(\partial_\sig\PiQ(\s)\right)G_{\rm end}^{J}(\s)
+        +
+        \PiQ(\s)\partial_\sig G_{\rm end}^{J}(\s).
+\]
+The derivative of \(\PiQ\) is included in the endpoint certificate.
+
+The first-cell term is
+\[
+        J_1(\s)
+        =
+        \int_1^2
+        P(x-1)
+        \left[
+            \s(\s-2)x^{\s-3}
+            +
+            (1-\s)(\s+1)x^{-\s-2}
+        \right]
+        \,\dd x,
+\]
+where
+\[
+        P(t)=\frac{t^2}{2}-\frac{t}{2}+\frac{1}{12}.
+\]
+Its \(\sig\)-derivative is obtained directly:
+\[
+\begin{aligned}
+        \partial_\sig J_1(\s)
+        =
+        \int_1^2
+        P(x-1)
+        \big[
+            &(2\s-2)x^{\s-3}
+            +
+            \s(\s-2)(\log x)x^{\s-3}
+            \\
+            &-
+            2\s x^{-\s-2}
+            -
+            (1-\s)(\s+1)(\log x)x^{-\s-2}
+        \big]
+        \,\dd x.
+\end{aligned}
+\]
+
+The regularized endpoint scalar is denoted by
+\[
+        \Xi_{\rm end}(\tauh).
+\]
+The extracted endpoint layer is
+\[
+        \mathcal L_{\rm end}^{(4)}(\s,\tauh)
+        =
+        -\ii\Xi_{\rm end}(\tauh)
+        \left(
+            2^{\sig-2}e^{\ii L}
+            +
+            2^{-\sig-1}e^{-\ii L}
+        \right).
+\]
+The correction
+\[
+        E_\Xi-\mathcal L_{\rm end}^{(4)}
+\]
+is purely algebraic.  Its derivative is computed by differentiating the
+coefficients and the powers of \(2^\sig\); the scalar
+\(\Xi_{\rm end}(\tauh)\) depends on \(\tauh\), not on \(\sig\).
+
+The remaining endpoint term is the post-integration-by-parts remainder
+\[
+        E_{\rm end}^{\rm rem}.
+\]
+For the plus family, the remainder integrals have the form
+\[
+        R_{m,+}^{\eps,{\rm end}}(\s)
+        =
+        \frac{1}{\ii}
+        \int_2^\infty
+        e^{\ii\Phi_{m,+}^{\eps}(x)}
+        \left(
+            \frac{x^{\sig-3}}
+            {(\Phi_{m,+}^{\eps})'(x)}
+        \right)'
+        \,\dd x.
+\]
+For the minus family,
+\[
+        R_{m,-}^{\eps,{\rm end}}(\s)
+        =
+        \frac{1}{\ii}
+        \int_2^\infty
+        e^{\ii\Phi_{m,-}^{\eps}(x)}
+        \left(
+            \frac{x^{-\sig-2}}
+            {(\Phi_{m,-}^{\eps})'(x)}
+        \right)'
+        \,\dd x.
+\]
+The \(\sig\)-derivatives are obtained by inserting the corresponding
+\(\log x\) factors into the amplitudes.  The endpoint certificate bounds these
+remainders by conservative integration-by-parts envelopes.
+
+The endpoint sector certificate records three components:
+\[
+        \text{first-cell plus }\zeta(2)\text{ cancellation},
+\]
+\[
+        \Xi_{\rm end}\text{ coefficient correction},
+\]
+and
+\[
+        \text{post-IBP endpoint remainder}.
+\]
+The final safety-normalized endpoint constants are
+\[
+        C_{{\rm end},0}
+        =
+        71000100.000071000000,
+\]
+and
+\[
+        C_{{\rm end},1}
+        =
+        281000100.000281000000.
+\]
+Therefore
+\[
+        |\Rend(\s)|
+        \le
+        C_{{\rm end},0}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+and
+\[
+        |\partial_\sig\Rend(\s)|
+        \le
+        C_{{\rm end},1}
+        \frac{\log\tauh}{\tauh^{3/2}}.
+\]
+
+\subsection{The core sector}
+
+The core sector contains algebraic corrections left after the main quotient
+matching has been performed.  It is marked as
+\[
+        \JSON{side = mixed}
+\]
+because its subcomponents may have different normalizations.  The explicit
+component certified in the final run is the quotient-side coefficient mismatch.
+
+The quotient stationary coefficient ratio is
+\[
+        \rho_Q(\s,\tauh)
+        =
+        \frac{\s-1}{\s}
+        \frac{C_A(\s,\tauh)}{C_B(\s,\tauh)}.
+\]
+The corresponding \(J\)-packet ratio is
+\[
+        \rho_J(\s,\tauh)
+        =
+        -\ii
+        \frac{\s(\s-2)}{(1-\s)(\s+1)}
+        \left(\frac{2\pi}{\tauh}\right)^{1-2\sig}
+        e^{2\ii\Theta(\tauh)}.
+\]
+The exact mismatch is
+\[
+        \Delta_\rho(\s,\tauh)
+        =
+        \rho_Q(\s,\tauh)-\rho_J(\s,\tauh).
+\]
+A direct simplification gives
+\[
+        \Delta_\rho(\s,\tauh)
+        =
+        -\ii
+        \left(\frac{2\pi}{\tauh}\right)^{1-2\sig}
+        e^{2\ii\Theta(\tauh)}
+        \frac{\s^2-\s+1}{\s(1-\s)(\s+1)}.
+\]
+The corresponding core contribution is
+\[
+        G_{\rho}^{\rm core}(\s)
+        =
+        C_B(\s,\tauh)
+        \Delta_\rho(\s,\tauh)
+        \sum_{m\le N(\tauh)}m^{-\s},
+\]
+with
+\[
+        N(\tauh)
+        =
+        \left\lfloor \frac{\tauh}{4\pi}\right\rfloor.
+\]
+This term is already in quotient normalization.  It must not be multiplied by
+\(\PiQ\) again.
+
+The derivative is
+\[
+\begin{aligned}
+        \partial_\sig G_{\rho}^{\rm core}
+        =
+        &(\partial_\sig C_B)\Delta_\rho
+        \sum_{m\le N}m^{-\s}
+        \\
+        &+
+        C_B(\partial_\sig\Delta_\rho)
+        \sum_{m\le N}m^{-\s}
+        \\
+        &+
+        C_B\Delta_\rho
+        \partial_\sig
+        \sum_{m\le N}m^{-\s}.
+\end{aligned}
+\]
+Here
+\[
+        \partial_\sig C_B
+        =
+        \log\left(\frac{2\pi}{\tauh}\right)C_B,
+\]
+and
+\[
+        \partial_\sig
+        \sum_{m\le N}m^{-\s}
+        =
+        -\sum_{m\le N}(\log m)m^{-\s}.
+\]
+Writing
+\[
+        Q(\s)
+        =
+        \frac{\s^2-\s+1}{\s(1-\s)(\s+1)},
+\]
+one may compute
+\[
+        \partial_\sig\Delta_\rho
+        =
+        -\ii
+        \left(\frac{2\pi}{\tauh}\right)^{1-2\sig}
+        e^{2\ii\Theta}
+        \left[
+            -2\log\left(\frac{2\pi}{\tauh}\right)Q(\s)
+            +
+            Q'(\s)
+        \right].
+\]
+The certificate bounds the Dirichlet polynomial and its derivative by
+elementary integral estimates.  Since this component is \(Q\)-side, the core
+certificate records
+\[
+        \JSON{projection = none}
+\]
+for this subcomponent.
+
+The final safety-normalized core constants are
+\[
+        C_{{\rm core},0}
+        =
+        100.15143013245947061906516300167251169542246109728103520969123297128614893010207,
+\]
+and
+\[
+        C_{{\rm core},1}
+        =
+        101.72541371865680722623693802471509402877474481545266923344493309421933909293843.
+\]
+Thus
+\[
+        |\Rcore(\s)|
+        \le
+        C_{{\rm core},0}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+and
+\[
+        |\partial_\sig\Rcore(\s)|
+        \le
+        C_{{\rm core},1}
+        \frac{\log\tauh}{\tauh^{3/2}}.
+\]
+
+Combining these three subsectors gives the band, endpoint, and core entries of
+the final certificate.  Their constants are included in the final sums
+\[
+        \Czero=\sum_\nu C_{\nu,0}^{\rm safe},
+        \qquad
+        \Cone=\sum_\nu C_{\nu,1}^{\rm safe}.
+\]
+The normalization ledger ensures that the band and core quotient-side pieces
+are not projected twice, while the endpoint sector is projected exactly once
+and includes the derivative of the projection.
+
+\begin{theorem}[Certified band, endpoint, and core sectors]
+On
+\[
+        \sig\in[0.49,0.51],
+        \qquad
+        \tauh\ge10,
+\]
+the three sectors satisfy
+\[
+        |\Rband(\s)|
+        \le
+        C_{{\rm band},0}
+        \frac{\log\tauh}{\tauh^{3/2}},
+        \qquad
+        |\partial_\sig\Rband(\s)|
+        \le
+        C_{{\rm band},1}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+with
+\[
+        C_{{\rm band},0}=5100100.000005100000,
+        \qquad
+        C_{{\rm band},1}=9400100.000009400000;
+\]
+\[
+        |\Rend(\s)|
+        \le
+        C_{{\rm end},0}
+        \frac{\log\tauh}{\tauh^{3/2}},
+        \qquad
+        |\partial_\sig\Rend(\s)|
+        \le
+        C_{{\rm end},1}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+with
+\[
+        C_{{\rm end},0}=71000100.000071000000,
+        \qquad
+        C_{{\rm end},1}=281000100.000281000000;
+\]
+and
+\[
+        |\Rcore(\s)|
+        \le
+        C_{{\rm core},0}
+        \frac{\log\tauh}{\tauh^{3/2}},
+        \qquad
+        |\partial_\sig\Rcore(\s)|
+        \le
+        C_{{\rm core},1}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+with
+\[
+        C_{{\rm core},0}
+        =
+        100.15143013245947061906516300167251169542246109728103520969123297128614893010207,
+\]
+and
+\[
+        C_{{\rm core},1}
+        =
+        101.72541371865680722623693802471509402877474481545266923344493309421933909293843.
+\]
+\end{theorem}
+
+\begin{proof}
+The band sector is certified directly in quotient normalization by bounding
+the exact finite band residual after subtracting its endpoint main term.  The
+endpoint sector is first bounded on the \(J\)-side and then projected by
+\(\PiQ\), with the derivative term
+\((\partial_\sig\PiQ)G_{\rm end}^{J}\) included.  The core sector records the
+explicit quotient-side coefficient mismatch and therefore applies no further
+projection to that subcomponent.  Each sector certificate contains the value
+constant, the \(\sig\)-derivative constant, a coverage hash, a normalization
+hash, and a proof hash.  The displayed constants are the safety-normalized
+constants accepted by the final merger.
+\end{proof}
+
+
+% ============================================================
+% Step 6: Far stationary and global nonstationary sectors
+% ============================================================
+
+\section{Far stationary and global nonstationary sector certificates}
+
+We now describe the two remaining analytic tail sectors:
+\[
+        \Rfar
+        \qquad\text{and}\qquad
+        \Rnonstat.
+\]
+Both sectors are naturally produced on the \(J\)-side and are therefore
+declared in the certificate with
+\[
+        \JSON{side = J\_projected}.
+\]
+Consequently, both sectors are projected into quotient normalization by
+\[
+        \PiQ(\s)
+        =
+        \frac{\ii\tauh}{(1-\s)(\s+1)}.
+\]
+If
+\[
+        G_{\rm far}^{J}(\s)
+        \quad\text{and}\quad
+        G_{\rm nonstat}^{J}(\s)
+\]
+denote the corresponding \(J\)-side residuals, then
+\[
+        \Rfar(\s)=\PiQ(\s)G_{\rm far}^{J}(\s),
+\]
+and
+\[
+        \Rnonstat(\s)=\PiQ(\s)G_{\rm nonstat}^{J}(\s).
+\]
+The derivative certificates therefore include the projection derivative:
+\[
+        \partial_\sig\Rfar(\s)
+        =
+        (\partial_\sig\PiQ(\s))G_{\rm far}^{J}(\s)
+        +
+        \PiQ(\s)\partial_\sig G_{\rm far}^{J}(\s),
+\]
+and
+\[
+        \partial_\sig\Rnonstat(\s)
+        =
+        (\partial_\sig\PiQ(\s))G_{\rm nonstat}^{J}(\s)
+        +
+        \PiQ(\s)\partial_\sig G_{\rm nonstat}^{J}(\s),
+\]
+where
+\[
+        \partial_\sig\PiQ(\s)
+        =
+        \PiQ(\s)
+        \left(
+            \frac{1}{1-\s}
+            -
+            \frac{1}{\s+1}
+        \right).
+\]
+This projection derivative is part of the normalization contract and is
+recorded by the sector normalization hashes.
+
+\subsection{The far stationary sector}
+
+The far stationary sector accounts for the stationary-family residuals that
+remain after subtracting the leading stationary packets away from the boundary
+transition near \(x=2\).  The relevant stationary families are
+\[
+        I_{m,+}^{-}(\s)
+        =
+        \int_2^\infty
+        x^{\sig-3}
+        e^{\ii(-2\pi m x+\tauh\log x)}
+        \,\dd x,
+\]
+and
+\[
+        I_{m,-}^{+}(\s)
+        =
+        \int_2^\infty
+        x^{-\sig-2}
+        e^{\ii(2\pi m x-\tauh\log x)}
+        \,\dd x.
+\]
+Both have stationary point
+\[
+        x_{m,*}
+        =
+        \frac{\tauh}{2\pi m}.
+\]
+This stationary point lies in the \(J\)-tail \(x\ge2\) precisely when
+\[
+        m\le \frac{\tauh}{4\pi}.
+\]
+
+As in the boundary analysis, set
+\[
+        \alpha=\frac{\tauh}{4\pi},
+        \qquad
+        w=\tauh^{-1/2},
+        \qquad
+        r_m=w(m-\alpha).
+\]
+The boundary transition corresponds to \(r_m\) bounded.  The far stationary
+sector is separated from the boundary by imposing
+\[
+        r_m\le -R_{\rm far},
+\]
+with the certified reference value
+\[
+        R_{\rm far}=4.
+\]
+Equivalently, the far stationary mode set is
+\[
+        \mathcal M_{\rm far}(\tauh)
+        =
+        \left\{
+            m\in\mathbb N:
+            m\le
+            \frac{\tauh}{4\pi}
+            -
+            R_{\rm far}\sqrt{\tauh}
+        \right\}.
+\]
+This separation ensures that the stationary point is uniformly away from the
+endpoint \(x=2\).  The endpoint-stationary transition window is not included in
+this sector; it belongs to the boundary sector.
+
+The leading stationary phase is
+\[
+        \Phi_m(\tauh)
+        =
+        \tauh\log\left(\frac{\tauh}{2\pi m}\right)-\tauh.
+\]
+For the plus-amplitude stationary family, the leading stationary packet is
+\[
+        \operatorname{SP}_{m,+}(\s)
+        =
+        (2\pi)^{5/2-\sig}
+        \tauh^{\sig-5/2}
+        m^{2-\sig}
+        e^{\ii\Phi_m(\tauh)-\ii\pi/4}.
+\]
+For the minus-amplitude stationary family, the leading stationary packet is
+\[
+        \operatorname{SP}_{m,-}(\s)
+        =
+        (2\pi)^{\sig+3/2}
+        \tauh^{-\sig-3/2}
+        m^{\sig+1}
+        e^{-\ii\Phi_m(\tauh)+\ii\pi/4}.
+\]
+The exact far stationary remainders are defined by
+\[
+        D_{m,+}^{\rm far}(\s)
+        =
+        I_{m,+}^{-}(\s)
+        -
+        \operatorname{SP}_{m,+}(\s),
+\]
+and
+\[
+        D_{m,-}^{\rm far}(\s)
+        =
+        I_{m,-}^{+}(\s)
+        -
+        \operatorname{SP}_{m,-}(\s).
+\]
+This is the object certified by the far sector: the exact integral minus the
+explicit leading stationary packet.  No asymptotic symbol is part of the
+definition of the residual.
+
+The \(J\)-side far residual is
+\[
+        G_{\rm far}^{J}(\s)
+        =
+        \sum_{m\in\mathcal M_{\rm far}(\tauh)}
+        \frac{1}{4\pi^2m^2}
+        \left[
+            c_+(\s)D_{m,+}^{\rm far}(\s)
+            +
+            c_-(\s)D_{m,-}^{\rm far}(\s)
+        \right],
+\]
+where
+\[
+        c_+(\s)=\s(\s-2),
+        \qquad
+        c_-(\s)=(1-\s)(\s+1).
+\]
+The derivative is
+\[
+\begin{aligned}
+        \partial_\sig G_{\rm far}^{J}(\s)
+        =
+        \sum_{m\in\mathcal M_{\rm far}(\tauh)}
+        \frac{1}{4\pi^2m^2}
+        \big[
+            &c_+'(\s)D_{m,+}^{\rm far}
+            +
+            c_+(\s)\partial_\sig D_{m,+}^{\rm far}
+            \\
+            &+
+            c_-'(\s)D_{m,-}^{\rm far}
+            +
+            c_-(\s)\partial_\sig D_{m,-}^{\rm far}
+        \big],
+\end{aligned}
+\]
+with
+\[
+        c_+'(\s)=2\s-2,
+        \qquad
+        c_-'(\s)=-2\s.
+\]
+
+The \(\sig\)-derivatives of the exact stationary remainders are also exact.
+Since the phases are independent of \(\sig\),
+\[
+        \partial_\sig I_{m,+}^{-}(\s)
+        =
+        \int_2^\infty
+        (\log x)x^{\sig-3}
+        e^{\ii(-2\pi m x+\tauh\log x)}
+        \,\dd x,
+\]
+and
+\[
+        \partial_\sig I_{m,-}^{+}(\s)
+        =
+        -
+        \int_2^\infty
+        (\log x)x^{-\sig-2}
+        e^{\ii(2\pi m x-\tauh\log x)}
+        \,\dd x.
+\]
+The stationary packets satisfy
+\[
+        \partial_\sig\operatorname{SP}_{m,+}(\s)
+        =
+        \log\left(\frac{\tauh}{2\pi m}\right)
+        \operatorname{SP}_{m,+}(\s),
+\]
+and
+\[
+        \partial_\sig\operatorname{SP}_{m,-}(\s)
+        =
+        -
+        \log\left(\frac{\tauh}{2\pi m}\right)
+        \operatorname{SP}_{m,-}(\s).
+\]
+Thus
+\[
+        \partial_\sig D_{m,+}^{\rm far}
+        =
+        \partial_\sig I_{m,+}^{-}
+        -
+        \log\left(\frac{\tauh}{2\pi m}\right)
+        \operatorname{SP}_{m,+},
+\]
+and
+\[
+        \partial_\sig D_{m,-}^{\rm far}
+        =
+        \partial_\sig I_{m,-}^{+}
+        +
+        \log\left(\frac{\tauh}{2\pi m}\right)
+        \operatorname{SP}_{m,-}.
+\]
+
+For uniform certification, the far verifier uses scaled stationary variables.
+Let
+\[
+        u=\frac{x}{x_{m,*}},
+        \qquad
+        x_{m,*}=\frac{\tauh}{2\pi m}.
+\]
+Define
+\[
+        \psi(u)=\log u-u+1.
+\]
+Then
+\[
+        \psi(1)=0,
+        \qquad
+        \psi'(1)=0,
+        \qquad
+        \psi''(1)=-1.
+\]
+The scaled stationary integrals are
+\[
+        \mathfrak I_+(\sig,\tauh,\beta)
+        =
+        \int_\beta^\infty
+        u^{\sig-3}
+        e^{\ii\tauh\psi(u)}
+        \,\dd u,
+\]
+and
+\[
+        \mathfrak I_-(\sig,\tauh,\beta)
+        =
+        \int_\beta^\infty
+        u^{-\sig-2}
+        e^{-\ii\tauh\psi(u)}
+        \,\dd u,
+\]
+where
+\[
+        \beta=\frac{4\pi m}{\tauh}.
+\]
+The leading scaled stationary models are
+\[
+        \mathfrak S_+(\tauh)
+        =
+        e^{-\ii\pi/4}\sqrt{\frac{2\pi}{\tauh}},
+\]
+and
+\[
+        \mathfrak S_-(\tauh)
+        =
+        e^{\ii\pi/4}\sqrt{\frac{2\pi}{\tauh}}.
+\]
+The scaled remainders are
+\[
+        \mathfrak D_+
+        =
+        \mathfrak I_+-\mathfrak S_+,
+        \qquad
+        \mathfrak D_-
+        =
+        \mathfrak I_- - \mathfrak S_-.
+\]
+The far-sector envelope certifies these scaled remainders uniformly in the far
+stationary range, including their \(\sig\)-derivatives.  The final certificate
+uses a deliberately conservative envelope.  The far sector safe constants are
+\[
+        C_{{\rm far},0}
+        =
+        50000000100.050000000000,
+\]
+and
+\[
+        C_{{\rm far},1}
+        =
+        100000000100.100000000000.
+\]
+Therefore
+\[
+        |\Rfar(\s)|
+        \le
+        C_{{\rm far},0}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+and
+\[
+        |\partial_\sig\Rfar(\s)|
+        \le
+        C_{{\rm far},1}
+        \frac{\log\tauh}{\tauh^{3/2}}.
+\]
+
+\subsection{The global nonstationary sector}
+
+The global nonstationary sector contains the four-family tail pieces that are
+not assigned to the band, boundary, endpoint, far stationary, floor, or core
+sectors.  The four tail families are
+\[
+        I_{m,+}^{\eps}(\s)
+        =
+        \int_2^\infty
+        x^{\sig-3}
+        e^{\ii(\eps 2\pi m x+\tauh\log x)}
+        \,\dd x,
+\]
+and
+\[
+        I_{m,-}^{\eps}(\s)
+        =
+        \int_2^\infty
+        x^{-\sig-2}
+        e^{\ii(\eps 2\pi m x-\tauh\log x)}
+        \,\dd x,
+\]
+with
+\[
+        \eps\in\{+1,-1\}.
+\]
+The phase derivatives are
+\[
+        (\Phi_{m,+}^{\eps})'(x)
+        =
+        \eps 2\pi m+\frac{\tauh}{x},
+\]
+and
+\[
+        (\Phi_{m,-}^{\eps})'(x)
+        =
+        \eps 2\pi m-\frac{\tauh}{x}.
+\]
+For \(\tauh>0\), the families
+\[
+        I_{m,+}^{+},
+        \qquad
+        I_{m,-}^{-}
+\]
+are always nonstationary.  The families
+\[
+        I_{m,+}^{-},
+        \qquad
+        I_{m,-}^{+}
+\]
+may have stationary points, but only when
+\[
+        m\le\frac{\tauh}{4\pi}.
+\]
+The stationary pieces in the far range are assigned to \(\Rfar\), and the
+endpoint-stationary transition window is assigned to \(\Rbd\).  The remaining
+parts are assigned to the global nonstationary sector.
+
+Let
+\[
+        \mathscr N
+        \subset
+        \mathbb N\times\{+,-\}\times\{+,-\}
+\]
+be the certified nonstationary index set after removing the already assigned
+band, boundary, endpoint, far, floor, and core pieces.  For
+\[
+        \kappa\in\{+,-\},
+        \qquad
+        \eps\in\{+,-\},
+\]
+write
+\[
+        I_{m,\kappa}^{\eps}(\s)
+\]
+for the corresponding oscillatory integral.  The \(J\)-side nonstationary
+residual is
+\[
+        G_{\rm nonstat}^{J}(\s)
+        =
+        \frac{1}{4\pi^2}
+        \sum_{(m,\kappa,\eps)\in\mathscr N}
+        \frac{1}{m^2}
+        c_\kappa(\s)
+        I_{m,\kappa}^{\eps}(\s),
+\]
+where
+\[
+        c_+(\s)=\s(\s-2),
+        \qquad
+        c_-(\s)=(1-\s)(\s+1).
+\]
+Its derivative is
+\[
+\begin{aligned}
+        \partial_\sig G_{\rm nonstat}^{J}(\s)
+        =
+        \frac{1}{4\pi^2}
+        \sum_{(m,\kappa,\eps)\in\mathscr N}
+        \frac{1}{m^2}
+        \left[
+            c_\kappa'(\s)
+            I_{m,\kappa}^{\eps}(\s)
+            +
+            c_\kappa(\s)
+            \partial_\sig I_{m,\kappa}^{\eps}(\s)
+        \right].
+\end{aligned}
+\]
+Since the phases do not depend on \(\sig\),
+\[
+        \partial_\sig I_{m,+}^{\eps}(\s)
+        =
+        \int_2^\infty
+        (\log x)x^{\sig-3}
+        e^{\ii\Phi_{m,+}^{\eps}(x)}
+        \,\dd x,
+\]
+and
+\[
+        \partial_\sig I_{m,-}^{\eps}(\s)
+        =
+        -
+        \int_2^\infty
+        (\log x)x^{-\sig-2}
+        e^{\ii\Phi_{m,-}^{\eps}(x)}
+        \,\dd x.
+\]
+
+The certification is by integration by parts on regions where the phase
+derivative is separated from zero.  For a general phase derivative
+\[
+        p(x)=\Phi'(x),
+\]
+define
+\[
+        \mathcal L_p A
+        =
+        \left(\frac{A}{p}\right)'
+        =
+        \frac{A'}{p}
+        -
+        \frac{A p'}{p^2}.
+\]
+Then
+\[
+        \int_a^\infty A(x)e^{\ii\Phi(x)}\,\dd x
+        =
+        -\frac{A(a)e^{\ii\Phi(a)}}{\ii p(a)}
+        -
+        \frac{1}{\ii}
+        \int_a^\infty
+        \mathcal L_pA(x)e^{\ii\Phi(x)}
+        \,\dd x.
+\]
+A second integration by parts gives the certified bound
+\[
+\begin{aligned}
+        \left|
+        \int_a^\infty A e^{\ii\Phi}\,\dd x
+        \right|
+        \le
+        &
+        \frac{|A(a)|}{|p(a)|}
+        +
+        \frac{|(\mathcal L_pA)(a)|}{|p(a)|}
+        \\
+        &+
+        \int_a^\infty
+        |\mathcal L_p^2A(x)|
+        \,\dd x.
+\end{aligned}
+\]
+The derivative certificate uses the same operator with
+\[
+        A
+        \quad\text{replaced by}\quad
+        \partial_\sig A.
+\]
+This is valid because the phases are independent of \(\sig\).
+
+The global nonstationary certificate records a conservative envelope for the
+always-nonstationary families, the potentially stationary families outside
+their stationary ranges, and a partition guard ensuring that no region already
+assigned to another sector is counted again.  The final safety-normalized constants are
+\[
+        C_{{\rm nonstat},0}
+        =
+        20000000100.020000000000,
+\]
+and
+\[
+        C_{{\rm nonstat},1}
+        =
+        40000000100.040000000000.
+\]
+Thus
+\[
+        |\Rnonstat(\s)|
+        \le
+        C_{{\rm nonstat},0}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+and
+\[
+        |\partial_\sig\Rnonstat(\s)|
+        \le
+        C_{{\rm nonstat},1}
+        \frac{\log\tauh}{\tauh^{3/2}}.
+\]
+
+The final repository
+\[
+        \texttt{https://github.com/vicblab/RH-inner-strip-certifier}
+\]
+contains the scripts and tutorial-style instructions used to reproduce these
+sector certificates, including the one-command driver
+\[
+        \code{./run\_all\_certification.sh}.
+\]
+The repository README records the intended strip
+\[
+        \sig\in[0.49,0.51],
+\]
+the bracket parameters
+\[
+        u_0=0.01,
+        \qquad
+        g_0=0.2,
+\]
+the target height
+\[
+        T=10^{30},
+\]
+and the expected merged constants
+\[
+        C_{\rm even}\approx2.5567524018976995\times10^{11},
+\]
+\[
+        C_{\sig}\approx2.9182458524367624\times10^{11},
+\]
+\[
+        C_{\rm inner}\approx3.879837844533457\times10^{11}.
+\]
+It also states that the full run creates
+\[
+        \code{INNER\_STRIP\_CERTIFICATE\_SAFE.json}
+\]
+and that the final JSON must contain
+\[
+        \JSON{status = inner\_full\_certificate}
+\]
+and
+\[
+        \JSON{height\_condition\_holds = true}.
+\]
+This repository is the public reproduction artifact for the certified
+constants quoted in this paper. \cite{InnerRepo}
+
+We summarize the far and global nonstationary sectors as follows.
+
+\begin{theorem}[Certified far and global nonstationary sectors]
+On
+\[
+        \sig\in[0.49,0.51],
+        \qquad
+        \tauh\ge10,
+\]
+the far stationary residual satisfies
+\[
+        |\Rfar(\s)|
+        \le
+        C_{{\rm far},0}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+and
+\[
+        |\partial_\sig\Rfar(\s)|
+        \le
+        C_{{\rm far},1}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+with
+\[
+        C_{{\rm far},0}
+        =
+        50000000100.050000000000,
+\]
+and
+\[
+        C_{{\rm far},1}
+        =
+        100000000100.100000000000.
+\]
+The global nonstationary residual satisfies
+\[
+        |\Rnonstat(\s)|
+        \le
+        C_{{\rm nonstat},0}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+and
+\[
+        |\partial_\sig\Rnonstat(\s)|
+        \le
+        C_{{\rm nonstat},1}
+        \frac{\log\tauh}{\tauh^{3/2}},
+\]
+with
+\[
+        C_{{\rm nonstat},0}
+        =
+        20000000100.020000000000,
+\]
+and
+\[
+        C_{{\rm nonstat},1}
+        =
+        40000000100.040000000000.
+\]
+Both sectors are \(J\)-side projected and include the derivative of the
+quotient projection.
+\end{theorem}
+
+\begin{proof}
+The far sector is the exact stationary-family residual after subtracting the
+leading stationary packets in the region \(r_m\le -R_{\rm far}\).  The
+stationary point is uniformly separated from the endpoint \(x=2\), and the
+scaled stationary variable reduces the certification to uniform bounds for the
+scaled remainders and their \(\sig\)-derivatives.  The global nonstationary
+sector consists of the remaining four-family tail pieces after removing the
+band, boundary, endpoint, far, floor, and core sectors.  On this set the phase
+derivative is bounded away from zero, so repeated integration by parts gives
+uniform value and \(\sig\)-derivative bounds.  Both \(J\)-side residuals are
+then projected by \(\PiQ\), and the derivative certificates include
+\((\partial_\sig\PiQ)G^{J}\).  The displayed constants are the
+safety-normalized constants recorded in the final sector JSON files and
+accepted by the final strict merger.
+\end{proof}
+
+
+% ============================================================
+% Step 7: Final merge, height computation, and theorem assembly
+% ============================================================
+
+\section{Final merge and height computation}
+
+We now assemble the seven residual-sector certificates and the finite-width
+bracket certificate into the final inner-strip certificate.  The final merger is
+the strict bracket-aware verifier
+\[
+        \code{merge\_inner\_certificate\_with\_bracket\_safe.py}.
+\]
+It requires the seven residual-sector files
+\[
+        \code{band\_sector.safe.json},
+        \quad
+        \code{bd\_sector.safe.json},
+        \quad
+        \code{far\_sector.safe.json},
+        \quad
+        \code{end\_sector.safe.json},
+\]
+\[
+        \code{nonstat\_sector.safe.json},
+        \quad
+        \code{floor\_sector.safe.json},
+        \quad
+        \code{core\_sector.safe.json},
+\]
+and it also requires the finite-width bracket certificate
+\[
+        \code{inner\_bracket\_vector.safe.json}.
+\]
+The final certificate is not allowed to be produced from the residual-sector
+certificates alone.  This is important: the obstruction requires both the
+residual upper bound and the finite-width bracket lower bound.
+
+The strict final merger checks the following conditions.
+
+First, every residual-sector file must have
+\[
+        \JSON{status = proved}.
+\]
+Second, every residual sector must declare one of the permitted normalization
+sides:
+\[
+        \Qside,
+        \qquad
+        \Jproj,
+        \qquad
+        \Zeroside,
+        \qquad
+        \Mixedside.
+\]
+Third, every residual sector must contain both safety-normalized constants
+\[
+        \JSON{C\_value\_upper\_safe}
+\]
+and
+\[
+        \JSON{C\_sigma\_derivative\_upper\_safe}.
+\]
+Fourth, the finite-width bracket certificate must have
+\[
+        \JSON{status = proved}
+\]
+and must certify
+\[
+        \JSON{g0\_bracket\_vector\_lower}\ge0.2.
+\]
+Only after these conditions are satisfied does the final merger compute the
+residual vector constant and check the height inequality.
+
+Let
+\[
+        C_{\nu,0}^{\rm safe}
+\]
+and
+\[
+        C_{\nu,1}^{\rm safe}
+\]
+denote the value-channel and \(\sig\)-derivative-channel constants for a
+sector
+\[
+        \nu\in
+        \{
+        {\rm band},
+        {\rm bd},
+        {\rm far},
+        {\rm end},
+        {\rm nonstat},
+        {\rm floor},
+        {\rm core}
+        \}.
+\]
+The final value-channel constant is
+\[
+        \Czero
+        =
+        \sum_\nu C_{\nu,0}^{\rm safe}.
+\]
+The final derivative-channel constant is
+\[
+        \Cone
+        =
+        \sum_\nu C_{\nu,1}^{\rm safe}.
+\]
+The two channels are then combined as a Euclidean vector bound:
+\[
+        \Cinner
+        =
+        \sqrt{\Czero^2+\Cone^2}.
+\]
+In the final certificate, the seven sector safe constants are as follows.
+
+For the band sector,
+\[
+        C_{{\rm band},0}^{\rm safe}
+        =
+        5100100.000005100000,
+\]
+and
+\[
+        C_{{\rm band},1}^{\rm safe}
+        =
+        9400100.000009400000.
+\]
+For the boundary sector,
+\[
+        C_{{\rm bd},0}^{\rm safe}
+        =
+        185599139689.54844424576273899129572044225947553844933704222323532721371511756646,
+\]
+and
+\[
+        C_{{\rm bd},1}^{\rm safe}
+        =
+        151534184741.81053762160606677355438429846417653094438319187408516674070499261542.
+\]
+For the far stationary sector,
+\[
+        C_{{\rm far},0}^{\rm safe}
+        =
+        50000000100.050000000000,
+\]
+and
+\[
+        C_{{\rm far},1}^{\rm safe}
+        =
+        100000000100.100000000000.
+\]
+For the endpoint sector,
+\[
+        C_{{\rm end},0}^{\rm safe}
+        =
+        71000100.000071000000,
+\]
+and
+\[
+        C_{{\rm end},1}^{\rm safe}
+        =
+        281000100.000281000000.
+\]
+For the global nonstationary sector,
+\[
+        C_{{\rm nonstat},0}^{\rm safe}
+        =
+        20000000100.020000000000,
+\]
+and
+\[
+        C_{{\rm nonstat},1}^{\rm safe}
+        =
+        40000000100.040000000000.
+\]
+For the floor sector,
+\[
+        C_{{\rm floor},0}^{\rm safe}=0,
+        \qquad
+        C_{{\rm floor},1}^{\rm safe}=0.
+\]
+For the core sector,
+\[
+        C_{{\rm core},0}^{\rm safe}
+        =
+        100.15143013245947061906516300167251169542246109728103520969123297128614893010207,
+\]
+and
+\[
+        C_{{\rm core},1}^{\rm safe}
+        =
+        101.72541371865680722623693802471509402877474481545266923344493309421933909293843.
+\]
+
+Summing the value-channel constants gives
+\[
+\begin{aligned}
+        \Czero
+        &=
+        C_{{\rm band},0}^{\rm safe}
+        +
+        C_{{\rm bd},0}^{\rm safe}
+        +
+        C_{{\rm far},0}^{\rm safe}
+        +
+        C_{{\rm end},0}^{\rm safe}
+        \\
+        &\quad
+        +
+        C_{{\rm nonstat},0}^{\rm safe}
+        +
+        C_{{\rm floor},0}^{\rm safe}
+        +
+        C_{{\rm core},0}^{\rm safe}
+        \\
+        &=
+        255675240189.76995047822220961036088344393198723387179813950427053690494808885261.
+\end{aligned}
+\]
+Summing the derivative-channel constants gives
+\[
+\begin{aligned}
+        \Cone
+        &=
+        C_{{\rm band},1}^{\rm safe}
+        +
+        C_{{\rm bd},1}^{\rm safe}
+        +
+        C_{{\rm far},1}^{\rm safe}
+        +
+        C_{{\rm end},1}^{\rm safe}
+        \\
+        &\quad
+        +
+        C_{{\rm nonstat},1}^{\rm safe}
+        +
+        C_{{\rm floor},1}^{\rm safe}
+        +
+        C_{{\rm core},1}^{\rm safe}
+        \\
+        &=
+        291824585243.67624174026287399979132232317927055971912800732675440018563808683476.
+\end{aligned}
+\]
+Therefore
+\[
+        \Cinner
+        =
+        \sqrt{\Czero^2+\Cone^2}
+\]
+is
+\[
+        \Cinner
+        =
+        387983784453.34570013486357394399212036290592556640627403482826815918742177195616.
+\]
+This value is recorded in the final JSON as
+\[
+        \JSON{C\_inner\_vector\_upper}.
+\]
+
+The bracket certificate gives
+\[
+        \gzero=0.2.
+\]
+The final obstruction inequality is
+\[
+        \sqrt T>
+        \frac{\Cinner}{\gzero}\log T.
+\]
+Substituting the certified values gives
+\[
+        \frac{\Cinner}{\gzero}
+        =
+        1939918922266.7285006743178697199606018145296278320313701741413407959371088597808.
+\]
+Thus the inequality to be checked is
+\[
+        \sqrt T
+        >
+        1939918922266.7285006743178697199606018145296278320313701741413407959371088597808
+        \log T.
+\]
+
+The final certificate checks this inequality at
+\[
+        T=10^{30}.
+\]
+At this height,
+\[
+        \sqrt T=10^{15},
+\]
+while
+\[
+        \frac{\Cinner}{\gzero}\log T
+        =
+        1939918922266.7285006743178697199606018145296278320313701741413407959371088597808
+        \cdot
+        30\log 10.
+\]
+The strict merger records
+\[
+        \JSON{height\_condition\_holds = true}.
+\]
+Thus the certified height condition holds at the shared target height
+\[
+        T=10^{30}.
+\]
+
+The height threshold can also be solved directly.  Setting
+\[
+        \sqrt T=
+        \frac{\Cinner}{\gzero}\log T
+\]
+and solving numerically gives
+\[
+        T_{\rm min}
+        \approx
+        1.5867647318922528\times10^{28}.
+\]
+Equivalently,
+\[
+        \log_{10}T_{\rm min}
+        \approx
+        28.2005125390955.
+\]
+Therefore the clean power-of-ten height statement implied by the certificate is
+\[
+        T\ge10^{29}.
+\]
+The repository provides the script
+\[
+        \code{tools/height\_threshold.py}
+\]
+to reproduce this computation.  The public repository
+\[
+        \texttt{https://github.com/vicblab/RH-inner-strip-certifier}
+\]
+also records the intended target strip, the expected merged constants, the
+one-command reproduction script, and the final JSON condition
+\[
+        \JSON{status = inner\_full\_certificate},
+        \qquad
+        \JSON{height\_condition\_holds = true}.
+\]
+The README states that running
+\[
+        \code{./run\_all\_certification.sh}
+\]
+creates all sector certificates in
+\[
+        \code{certs\_inner/}
+\]
+and then creates
+\[
+        \code{INNER\_STRIP\_CERTIFICATE\_SAFE.json}.
+\]
+This is the public reproducibility artifact for the final constants used in
+this paper. \cite{InnerRepo}
+We now state the final certified merge theorem.
+
+\begin{theorem}[Strict final inner-strip certificate]
+The strict bracket-aware final merger produces the certificate
+\[
+        \code{INNER\_STRIP\_CERTIFICATE\_SAFE.json}
+\]
+with
+\[
+        \JSON{status = inner\_full\_certificate}
+\]
+and
+\[
+        \JSON{height\_condition\_holds = true}.
+\]
+The certificate records
+\[
+        \Czero
+        =
+        255675240189.76995047822220961036088344393198723387179813950427053690494808885261,
+\]
+\[
+        \Cone
+        =
+        291824585243.67624174026287399979132232317927055971912800732675440018563808683476,
+\]
+and
+\[
+        \Cinner
+        =
+        387983784453.34570013486357394399212036290592556640627403482826815918742177195616.
+\]
+Together with
+\[
+        \gzero=0.2,
+\]
+the height inequality
+\[
+        \sqrt T>
+        \frac{\Cinner}{\gzero}\log T
+\]
+holds at
+\[
+        T=10^{30}.
+\]
+Moreover, the numerical threshold is
+\[
+        T_{\rm min}
+        \approx
+        1.5867647318922528\times10^{28},
+\]
+so the clean certified height statement is
+\[
+        T\ge10^{29}.
+\]
+\end{theorem}
+
+\begin{proof}
+The final merger first verifies that all seven residual sectors are present and
+have status \(\JSON{proved}\).  It then verifies that the finite-width bracket
+certificate is present and has status \(\JSON{proved}\), with
+\[
+        \JSON{g0\_bracket\_vector\_lower}\ge0.2.
+\]
+It sums the seven value-channel constants to obtain \(\Czero\), sums the seven
+\(\sig\)-derivative-channel constants to obtain \(\Cone\), and computes
+\[
+        \Cinner=\sqrt{\Czero^2+\Cone^2}.
+\]
+Finally, it evaluates
+\[
+        \sqrt T>
+        \frac{\Cinner}{\gzero}\log T
+\]
+at
+\[
+        T=10^{30}.
+\]
+The computed Boolean field
+\[
+        \JSON{height\_condition\_holds}
+\]
+is true.  Therefore the strict final certificate is issued.
+\end{proof}
+
+Combining the strict final certificate with the structural quotient obstruction
+gives the desired exclusion statement.
+
+\begin{corollary}[Certified central inner-strip exclusion above \(10^{29}\)]
+Assume the structural quotient identity and two-channel obstruction theorem
+proved in the analytic companion paper.  Then the Riemann zeta function has no
+off-critical nontrivial zeros in the central inner strip
+\[
+        0<|\Re s-\tfrac12|\le0.01
+\]
+for
+\[
+        |\Im s|\ge10^{29}.
+\]
+In particular, the exclusion holds at the target height
+\[
+        |\Im s|\ge10^{30}.
+\]
+\end{corollary}
+
+\begin{proof}
+At a nontrivial zero, the structural identity gives
+\[
+        \NQ(s)=0.
+\]
+The certified expansion gives
+\[
+        \NQ(s)
+        =
+        \frac{\ii}{\tauh}\Beff(\sig,\tauh)
+        +
+        \Rtot(s).
+\]
+The finite-width bracket certificate gives
+\[
+        \|\Bvec(u,\tauh)\|\ge\gzero=0.2
+\]
+for
+\[
+        0\le u\le0.01.
+\]
+The residual certificate gives
+\[
+        \|\Rtot(s)\|
+        \le
+        \Cinner\frac{\log\tauh}{\tauh^{3/2}}.
+\]
+If
+\[
+        \sqrt{\tauh}>
+        \frac{\Cinner}{\gzero}\log\tauh,
+\]
+then the residual is too small to cancel the bracket term.  Hence
+\[
+        \NQ(s)\ne0,
+\]
+contradicting the zero assumption.  The certified height computation shows
+that this inequality holds for
+\[
+        \tauh\ge10^{29}.
+\]
+Thus there are no off-critical zeros in the stated inner strip above that
+height.
+\end{proof}
+
+
+\section{Global assembly with the outer-strip certificate}
+
+The certificate proved in this paper is an inner-strip certificate.  Its
+certified region is
+\[
+        \Omega_{\rm in}
+        =
+        \left\{
+            s=\sig+\ii\tauh:
+            0<|\sig-\tfrac12|\le0.01,
+            \ |\tauh|\ge10^{29}
+        \right\}.
+\]
+It does not by itself certify the full critical strip.  To obtain a global
+high-height zero exclusion away from the endpoints \(\sig=0\) and \(\sig=1\),
+one must combine it with the outer-strip certificate.
+
+Let \(\delta_{\rm out}>0\) denote the endpoint margin certified by the
+outer-strip argument.  Assume that the outer-strip companion theorem \cite{OuterCompanion} proves
+that there are no off-critical zeros in
+\[
+        \Omega_{\rm out}
+        =
+        \left\{
+            s=\sig+\ii\tauh:
+            0.01\le\sig\le0.49,
+            \ |\tauh|\ge10^{30}
+        \right\}
+        \cup
+        \left\{
+            s=\sig+\ii\tauh:
+            0.51\le\sig\le0.99,
+            \ |\tauh|\ge10^{30}
+        \right\}.
+\]
+Assume also that the outer-strip theorem and the present inner-strip theorem
+use compatible quotient-normalization conventions and compatible height
+normalizations.
+
+The present paper proves the central part
+\[
+        0.49\le\sig\le0.51,
+        \qquad
+        \sig\ne\frac12,
+        \qquad
+        |\tauh|\ge10^{29}.
+\]
+Since
+\[
+        10^{30}\ge10^{29},
+\]
+the inner-strip certificate is valid throughout the central strip at the
+outer-strip target height \(10^{30}\).  Therefore, after combining the outer
+and inner certificates, the covered high-height region is
+\[
+        0.01\le\sig\le1-0.01,
+        \qquad
+        \sig\ne\frac12,
+        \qquad
+        |\tauh|\ge10^{30}.
+\]
+
+\begin{theorem}[Conditional global high-height assembly]
+Assume the structural quotient-obstruction theorem, the finite-width
+inner-strip certificate proved in this paper, and the outer-strip certificate \cite{OuterRepo}
+on
+\[
+        [0.01,0.49]\cup[0.51,0.99]
+\]
+at height \(10^{30}\).  Then there are no off-critical nontrivial zeros of
+\(\zeta(s)\) in
+\[
+        0.01\le\Re s\le1-0.01,
+        \qquad
+        \Re s\ne\frac12,
+        \qquad
+        |\Im s|\ge10^{30}.
+\]
+\end{theorem}
+
+\begin{proof}
+The outer-strip certificate excludes off-critical zeros for
+\[
+        0.01\le\sig\le0.49
+        \quad\text{and}\quad
+        0.51\le\sig\le0.99
+\]
+at height \(10^{30}\).  The present inner-strip certificate excludes
+off-critical zeros for
+\[
+        0.49\le\sig\le0.51,
+        \qquad
+        \sig\ne\frac12,
+\]
+already for height \(10^{29}\), and hence also for height \(10^{30}\).
+The union of these certified regions is
+\[
+        0.01\le\sig\le0.99,
+        \qquad
+        \sig\ne\frac12.
+\]
+Thus no off-critical zero can occur in the stated region at height
+\(|\tauh|\ge10^{30}\).
+\end{proof}
+
+
+% ============================================================
+% Step 8: Audit appendix, reproducibility protocol, and bibliography
+% ============================================================
+
+\appendix
+
+\section{Reproducibility and audit protocol}
+
+This appendix records the exact reproducibility protocol for the inner-strip
+certificate.  The public repository for the certificate is
+\[
+        \texttt{https://github.com/vicblab/RH-inner-strip-certifier}.
+\]
+The repository README states that the certifier reproduces the inner-strip
+residual constants for
+\[
+        \sig\in[0.49,0.51],
+        \qquad
+        u_0=0.01,
+        \qquad
+        g_0=0.2,
+        \qquad
+        T=10^{30},
+\]
+and that the final certificate is the file
+\[
+        \code{INNER\_STRIP\_CERTIFICATE\_SAFE.json}.
+\]
+It also states that the expected merged constants are approximately
+\[
+        C_{\rm even}\approx2.5567524018976995\times10^{11},
+\]
+\[
+        C_{\sig}\approx2.9182458524367624\times10^{11},
+\]
+and
+\[
+        C_{\rm inner}\approx3.879837844533457\times10^{11}.
+\]
+The repository provides a one-command reproduction script
+\[
+        \code{./run\_all\_certification.sh},
+\]
+which generates all sector certificates in
+\[
+        \code{certs\_inner/}
+\]
+and then creates
+\[
+        \code{INNER\_STRIP\_CERTIFICATE\_SAFE.json}.
+\]
+The README further specifies that the final JSON must contain
+\[
+        \JSON{status = inner\_full\_certificate}
+\]
+and
+\[
+        \JSON{height\_condition\_holds = true}.
+\]
+These are the public reproduction conditions for the certificate. \cite{InnerRepo}
+
+The repository is intended to be tested from a clean Python environment.  A
+typical run begins with
+\[
+        \code{python -m venv .venv},
+\]
+followed by
+\[
+        \code{source .venv/bin/activate},
+\]
+\[
+        \code{python -m pip install --upgrade pip},
+\]
+and
+\[
+        \code{python -m pip install python-flint}.
+\]
+After installing the dependency, the full certificate is reproduced by running
+\[
+        \code{./run\_all\_certification.sh}.
+\]
+This command creates the seven residual-sector certificates, the finite-width
+bracket certificate, and the strict final merged certificate.
+
+The complete list of final sector certificates is
+\[
+        \code{certs\_inner/band\_sector.safe.json},
+\]
+\[
+        \code{certs\_inner/bd\_sector.safe.json},
+\]
+\[
+        \code{certs\_inner/far\_sector.safe.json},
+\]
+\[
+        \code{certs\_inner/end\_sector.safe.json},
+\]
+\[
+        \code{certs\_inner/nonstat\_sector.safe.json},
+\]
+\[
+        \code{certs\_inner/floor\_sector.safe.json},
+\]
+and
+\[
+        \code{certs\_inner/core\_sector.safe.json}.
+\]
+The final strict merger also requires
+\[
+        \code{certs\_inner/inner\_bracket\_vector.safe.json}.
+\]
+Thus the minimum complete certificate directory must contain eight files:
+seven residual-sector JSON files and one bracket JSON file.
+
+The final theorem-level merger is
+\[
+        \code{scripts/merge\_inner\_certificate\_with\_bracket\_safe.py}.
+\]
+It is run as
+\[
+\begin{aligned}
+        &\code{python scripts/merge\_inner\_certificate\_with\_bracket\_safe.py} \\
+        &\quad
+        \code{--inputs 'certs\_inner/*\_sector.safe.json'} \\
+        &\quad
+        \code{--bracket certs\_inner/inner\_bracket\_vector.safe.json} \\
+        &\quad
+        \code{--height 1e30} \\
+        &\quad
+        \code{--g0 0.2} \\
+        &\quad
+        \code{--output INNER\_STRIP\_CERTIFICATE\_SAFE.json}.
+\end{aligned}
+\]
+This strict merger checks both the residual certificates and the finite-width
+bracket certificate.  It refuses to produce a theorem-level certificate if the
+bracket certificate is missing.  This is essential because the residual
+constants alone do not prove the obstruction; the finite-width bracket lower
+bound is also required.
+
+The final file
+\[
+        \code{INNER\_STRIP\_CERTIFICATE\_SAFE.json}
+\]
+must contain
+\[
+        \JSON{status = inner\_full\_certificate},
+\]
+\[
+        \JSON{height\_condition\_holds = true},
+\]
+\[
+        \JSON{u0 = 0.01},
+\]
+and
+\[
+        \JSON{g0\_bracket\_vector\_lower = 0.2}.
+\]
+It must also contain a
+\[
+        \JSON{bracket\_certificate}
+\]
+field recording the file and proof hash of
+\[
+        \code{certs\_inner/inner\_bracket\_vector.safe.json}.
+\]
+Finally, it must contain seven sector entries under the field
+\[
+        \JSON{sectors}.
+\]
+The seven sector names must be exactly
+\[
+        \JSON{band},
+        \quad
+        \JSON{bd},
+        \quad
+        \JSON{far},
+        \quad
+        \JSON{end},
+        \quad
+        \JSON{nonstat},
+        \quad
+        \JSON{floor},
+        \quad
+        \JSON{core}.
+\]
+
+\section{Sector audit checklist}
+
+Each residual-sector JSON is checked according to the same basic schema.  The
+field
+\[
+        \JSON{status}
+\]
+must equal
+\[
+        \JSON{proved}.
+\]
+The field
+\[
+        \JSON{side}
+\]
+must be one of
+\[
+        \Qside,
+        \qquad
+        \Jproj,
+        \qquad
+        \Zeroside,
+        \qquad
+        \Mixedside.
+\]
+The fields
+\[
+        \JSON{C\_value\_upper\_safe}
+\]
+and
+\[
+        \JSON{C\_sigma\_derivative\_upper\_safe}
+\]
+must be present and nonnegative.  The fields
+\[
+        \JSON{coverage\_hash},
+        \qquad
+        \JSON{normalization\_hash},
+        \qquad
+        \JSON{proof\_hash}
+\]
+must also be present.
+
+The permitted sector sides are fixed by the normalization ledger:
+\[
+        \JSON{band} \mapsto \Qside,
+\]
+\[
+        \JSON{bd} \mapsto \Jproj,
+\]
+\[
+        \JSON{far} \mapsto \Jproj,
+\]
+\[
+        \JSON{end} \mapsto \Jproj,
+\]
+\[
+        \JSON{nonstat} \mapsto \Jproj,
+\]
+\[
+        \JSON{floor} \mapsto \Zeroside,
+\]
+and
+\[
+        \JSON{core} \mapsto \Mixedside.
+\]
+The band sector is already in quotient normalization and is not projected
+again.  The boundary, far, endpoint, and global nonstationary sectors are
+\(J\)-side sectors and are projected by \(\PiQ\).  Their derivative
+certificates include the term
+\[
+        (\partial_\sig\PiQ)G^J.
+\]
+The floor sector is identically zero.  The core sector is mixed because the
+explicit coefficient mismatch is quotient-side, while any later algebraic
+subcomponents must declare their own normalization.
+
+The boundary sector has its own internal audit.  The file
+\[
+        \code{bd\_sector.safe.json}
+\]
+is assembled from the following hooks:
+\[
+        \text{finite compact boundary},
+\]
+\[
+        \text{midrange compact boundary bridge},
+\]
+\[
+        \text{high-\(\tauh\) compact Taylor boundary},
+\]
+\[
+        \text{compact-complement tail},
+\]
+\[
+        \text{compact-complement nonstationary transition},
+\]
+and
+\[
+        \text{compact-complement stationary overlap}.
+\]
+The boundary sector is accepted only after these hooks are merged into the
+single boundary-sector certificate.  The transition hooks record complementary
+box counts: phase-separated boxes are assigned to the nonstationary hook, and
+boxes whose derivative interval intersects the stationary threshold are
+assigned to the stationary-overlap hook.  This prevents the compact-complement
+transition region from being silently dropped.
+
+The bracket certificate is checked separately.  It must record
+\[
+        \JSON{status = proved},
+\]
+\[
+        \JSON{sector = inner\_bracket\_vector},
+\]
+\[
+        \JSON{u0 = 0.01},
+\]
+and
+\[
+        \JSON{g0\_bracket\_vector\_lower = 0.2}.
+\]
+The strict final merger does not accept the earlier critical-line-only bracket
+record.  It requires a finite-width bracket certificate.
+
+\section{Expected final constants}
+
+The final JSON produced in the certified run records
+\[
+        \Czero
+        =
+        255675240189.76995047822220961036088344393198723387179813950427053690494808885261,
+\]
+\[
+        \Cone
+        =
+        291824585243.67624174026287399979132232317927055971912800732675440018563808683476,
+\]
+and
+\[
+        \Cinner
+        =
+        387983784453.34570013486357394399212036290592556640627403482826815918742177195616.
+\]
+The value
+\[
+        \Cinner
+\]
+is the Euclidean combination
+\[
+        \Cinner
+        =
+        \sqrt{\Czero^2+\Cone^2}.
+\]
+The final bracket lower bound is
+\[
+        \gzero=0.2.
+\]
+Thus
+\[
+        \frac{\Cinner}{\gzero}
+        =
+        1939918922266.7285006743178697199606018145296278320313701741413407959371088597808.
+\]
+
+The final certificate checks the height inequality
+\[
+        \sqrt T>
+        \frac{\Cinner}{\gzero}\log T
+\]
+at
+\[
+        T=10^{30}.
+\]
+It records
+\[
+        \JSON{height\_condition\_holds = true}.
+\]
+Solving the equality
+\[
+        \sqrt T=
+        \frac{\Cinner}{\gzero}\log T
+\]
+gives
+\[
+        T_{\rm min}
+        \approx
+        1.5867647318922528\times10^{28}.
+\]
+Therefore the clean power-of-ten certified height is
+\[
+        T\ge10^{29}.
+\]
+The repository contains the utility
+\[
+        \code{tools/height\_threshold.py}
+\]
+to reproduce this calculation.
+
+\section{Hash and dependency policy}
+
+Every certificate JSON contains a proof hash.  The proof hash is not intended
+to replace mathematical verification; rather, it prevents accidental
+transcription or substitution of JSON files during the merge.  The final JSON
+records the proof hash of each of the seven sector certificates and the proof
+hash of the bracket certificate.  It also records coverage hashes and
+normalization hashes.  These serve as a dependency ledger.
+
+The coverage hash records which part of the decomposition is being certified.
+For example, the boundary coverage depends on the compact finite range,
+midrange bridge, high-\(\tauh\) Taylor range, compact-complement tail,
+nonstationary transition, and stationary-overlap transition.  The normalization
+hash records whether the sector is \(Q\)-side, \(J\)-side projected, mixed, or
+zero.  In particular, it records whether the quotient projection and its
+\(\sig\)-derivative are included.
+
+A verifier or referee should treat the final JSON as valid only if all of the
+following hold:
+\[
+        \JSON{status = inner\_full\_certificate},
+\]
+\[
+        \JSON{height\_condition\_holds = true},
+\]
+all seven residual sectors are present,
+\[
+        \JSON{bracket\_certificate}
+\]
+is present, and the bracket certificate has
+\[
+        \JSON{status = proved}.
+\]
+This is the minimal non-debatable audit condition for the certificate.
+
+\section{Repository reproduction commands}
+
+The complete reproduction procedure is as follows.  First, clone the public
+repository:
+\[
+        \code{git clone https://github.com/vicblab/RH-inner-strip-certifier}.
+\]
+Then enter the repository and create a fresh environment:
+\[
+        \code{cd RH-inner-strip-certifier},
+\]
+\[
+        \code{python -m venv .venv},
+\]
+\[
+        \code{source .venv/bin/activate},
+\]
+\[
+        \code{python -m pip install --upgrade pip},
+\]
+\[
+        \code{python -m pip install python-flint}.
+\]
+The full certificate is reproduced by
+\[
+        \code{./run\_all\_certification.sh}.
+\]
+The final output file is
+\[
+        \code{INNER\_STRIP\_CERTIFICATE\_SAFE.json}.
+\]
+The height threshold is reproduced by
+\[
+        \code{python tools/height\_threshold.py}.
+\]
+The repository README gives the same tutorial-level instructions and records
+the expected final constants and final JSON status fields. \cite{InnerRepo}
+
+The certification documented in this paper should therefore be read as a
+reproducible numerical and interval-arithmetic certificate for the structural
+quotient obstruction interface.  The analytic proof of that interface is
+external to this certificate paper; the present document verifies the constants,
+normalization ledger, bracket lower bound, and height computation used by the
+inner-strip obstruction.
+
+\section{Bibliographic references}
+
+The following references are used for the analytic and computational context
+of the certification.  The repository reference is the public reproduction
+artifact for the certificate.  The remaining references are standard references
+for the Riemann zeta function, asymptotic analysis, interval arithmetic, and
+Arb-style ball arithmetic.
+
+\begin{thebibliography}{99}
+
+\bibitem{Titchmarsh}
+E.~C. Titchmarsh,
+\emph{The Theory of the Riemann Zeta-Function},
+2nd ed., revised by D.~R. Heath-Brown,
+Oxford University Press, 1986.
+
+\bibitem{Edwards}
+H.~M. Edwards,
+\emph{Riemann's Zeta Function},
+Dover Publications, 2001.
+
+\bibitem{Olver}
+F.~W.~J. Olver,
+\emph{Asymptotics and Special Functions},
+AKP Classics, A K Peters, 1997.
+
+\bibitem{WhittakerWatson}
+E.~T. Whittaker and G.~N. Watson,
+\emph{A Course of Modern Analysis},
+4th ed.,
+Cambridge University Press, 1927.
+
+\bibitem{Moore}
+R.~E. Moore,
+\emph{Interval Analysis},
+Prentice-Hall, 1966.
+
+\bibitem{Tucker}
+W.~Tucker,
+\emph{Validated Numerics: A Short Introduction to Rigorous Computations},
+Princeton University Press, 2011.
+
+\bibitem{Arb}
+F.~Johansson,
+\emph{Arb: Efficient Arbitrary-Precision Midpoint-Radius Interval Arithmetic},
+IEEE Transactions on Computers 66, no.~8, 2017, pp.~1281--1292.
+
+\bibitem{FLINT}
+W.~Hart,
+\emph{Fast Library for Number Theory: An Introduction},
+Mathematical Software -- ICMS 2010,
+Lecture Notes in Computer Science, vol.~6327,
+Springer, 2010, pp.~88--91.
+\bibitem{OuterCompanion}
+V.~Blanco Bataller,
+\emph{Certified Outer-Strip Quotient Obstruction for the Riemann Zeta Function},
+companion certification manuscript.
+
+\bibitem{OuterRepo}
+V.~Blanco Bataller,
+\emph{RH-outer-strip-certifier},
+certifier repository for the outer-strip residual constants and high-height
+outer-strip exclusion.
+
+\bibitem{InnerRepo}
+V.~Blanco Bataller,
+\emph{RH-inner-strip-certifier},
+GitHub repository,
+\[
+        \url{https://github.com/vicblab/RH-inner-strip-certifier}.
+\]
+The repository contains the scripts, sector certificates, reproduction
+pipeline, and height-threshold utility for the certified inner-strip constants.
+The README records the target strip, bracket parameters, expected constants,
+one-command reproduction command, and final JSON status requirements.
+\end{thebibliography}
+
+\end{document}
+
+
