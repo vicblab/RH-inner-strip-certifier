@@ -1,0 +1,81 @@
+{
+  "C_even_residual_upper": "255675240189.76995047822220961036088344393198723387179813950427053690494808885261",
+  "C_inner_vector_upper": "387983784453.34570013486357394399212036290592556640627403482826815918742177195616",
+  "C_sigma_residual_upper": "291824585243.67624174026287399979132232317927055971912800732675440018563808683476",
+  "bracket_certificate": {
+    "file": "certs_inner/inner_bracket_vector.safe.json",
+    "proof_hash": "0fe0006fbb190c1ed6778ae5de3eb30960d7d63aa0f4cb7bd1a6275c9bf2bdab"
+  },
+  "g0_bracket_vector_lower": "0.2",
+  "height_condition": "sqrt(T) > (C_inner/g0)*log(T)",
+  "height_condition_holds": true,
+  "height_tested": "1E+30",
+  "proof_hash": "da6f68dfc64e5b1fb3e543fdbbac609ee9aabbbf323b62b5404d00ff78edaac6",
+  "sectors": {
+    "band": {
+      "C_sigma_derivative_upper_safe": "9400100.000009400000",
+      "C_value_upper_safe": "5100100.000005100000",
+      "coverage_hash": "9aa381c2fd1d07e3120d00893cdd57c37c78c92a8b2ea4f9fda143eff4c2387b",
+      "file": "certs_inner/band_sector.safe.json",
+      "normalization_hash": "de937fe2ec30de77c0ecc98ce0a286b07b4875e187215dc53d1f190c2af5dbc4",
+      "proof_hash": "6505809bd91c52ba8620498387c6f0081e2206ef58471a80e792127b5dfe2116",
+      "side": "Q"
+    },
+    "bd": {
+      "C_sigma_derivative_upper_safe": "151534184741.81053762160606677355438429846417653094438319187408516674070499261542",
+      "C_value_upper_safe": "185599139689.54844424576273899129572044225947553844933704222323532721371511756646",
+      "coverage_hash": "548e8f9214a4241b6c077507cf7c0c316586c6363716347d555ba607f78fcc35",
+      "file": "certs_inner/bd_sector.safe.json",
+      "normalization_hash": "8889b6ddcb5b6a50f7abec96131ec5029979fdd5d07e818570dc0700e52a9e2e",
+      "proof_hash": "11b170e4dde7bcc6874a39eb858a198ef1debb0708fe581ccc4d1cca8ea2f760",
+      "side": "J_projected"
+    },
+    "core": {
+      "C_sigma_derivative_upper_safe": "101.72541371865680722623693802471509402877474481545266923344493309421933909293843",
+      "C_value_upper_safe": "100.15143013245947061906516300167251169542246109728103520969123297128614893010207",
+      "coverage_hash": "4401fabb05371f121626a6d9845072068687464d7156fc4bffb365f408b878cd",
+      "file": "certs_inner/core_sector.safe.json",
+      "normalization_hash": "4a266557f712a15fb8a1aec201c8374f559e6413f1300358cf6af99839816164",
+      "proof_hash": "423d24517be8e9343873c21dd81a61b5b20682162850b796cf8dd4305ccf95a1",
+      "side": "mixed"
+    },
+    "end": {
+      "C_sigma_derivative_upper_safe": "281000100.000281000000",
+      "C_value_upper_safe": "71000100.000071000000",
+      "coverage_hash": "d9967c27907114e793921903dfac78c84a9305ec0acd60b4687647b6f48655bd",
+      "file": "certs_inner/end_sector.safe.json",
+      "normalization_hash": "6c1a9c6f34938539b5d536d5aa4c243a44d1fcf577a8dd4c046337d677e73f17",
+      "proof_hash": "58b2c6b60f959feea22b050cdb5c27a96a7d6244198fa7647da27666d97dd77a",
+      "side": "J_projected"
+    },
+    "far": {
+      "C_sigma_derivative_upper_safe": "100000000100.100000000000",
+      "C_value_upper_safe": "50000000100.050000000000",
+      "coverage_hash": "7b8a7870fd712bb1e314601a8d42b12926ca9a232c703f9faea68fc86a262d70",
+      "file": "certs_inner/far_sector.safe.json",
+      "normalization_hash": "0bd72b9fba3452a9cdfc9ddd2b58e6dfe010b1183ff33e6ee94e9e7e43a97cd4",
+      "proof_hash": "b2621bfc082d40da8972a1ed3ddee1a638c94ce26315ef0f43f5b41a4612cbda",
+      "side": "J_projected"
+    },
+    "floor": {
+      "C_sigma_derivative_upper_safe": "0",
+      "C_value_upper_safe": "0",
+      "coverage_hash": "971f03f5a649d52a3872557d6629d5e949773e13ad505bf48c49661a7137b19a",
+      "file": "certs_inner/floor_sector.safe.json",
+      "normalization_hash": "10593edd6a463fceba85f5abc49e0e101b70834d5208bad6a53ac6004d26b12f",
+      "proof_hash": "811466137c63e6cb2dbaff5479e9212883acf82f122a48d146dff77b899d91b1",
+      "side": "zero"
+    },
+    "nonstat": {
+      "C_sigma_derivative_upper_safe": "40000000100.040000000000",
+      "C_value_upper_safe": "20000000100.020000000000",
+      "coverage_hash": "000ff89c3c61789532eba81fcc2548dcfd5ca55b3f86cb860b73034ae978792d",
+      "file": "certs_inner/nonstat_sector.safe.json",
+      "normalization_hash": "e01859d71185a5b9cdb4c2cdf3e4de54279fdafcc5f540b895da986166eeaee0",
+      "proof_hash": "eb794dea1783a62dd3e71adbefd0ec46ab5d2542a78f1c9a5146891ee4859a83",
+      "side": "J_projected"
+    }
+  },
+  "status": "inner_full_certificate",
+  "u0": "0.01"
+}
